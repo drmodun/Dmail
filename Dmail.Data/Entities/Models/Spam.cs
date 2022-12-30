@@ -8,8 +8,9 @@ namespace Dmail.Data.Entities.Models
 {
     public class Spam
     {
-        public int MarkerId { get; set; }
-        public int MarkedId;
-        public bool IsSpam;
+        public int BlockerId { get; set; }
+        public User? Blocker;
+        public int Blocked;
+        public bool IsBlocked = true;
     }
 }

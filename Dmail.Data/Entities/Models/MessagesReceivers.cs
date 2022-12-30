@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Dmail.Data.Entities.Models
+﻿namespace Dmail.Data.Entities.Models
 {
     public class MessagesReceivers
     {
@@ -12,5 +6,6 @@ namespace Dmail.Data.Entities.Models
         public int ReceiverId;
         public Message? Message;
         public User? Receiver;
+        public bool Read;
     }
 }

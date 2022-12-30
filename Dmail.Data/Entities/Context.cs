@@ -55,7 +55,12 @@ namespace Dmail.Data.Entities
                 .HasOne(e => e.Receiver)
                 .WithMany(e => e.MessagesReceivers)
                 .HasForeignKey(ei => ei.ReceiverId);
-
+            modelBuilder.Entity<Spam>()
+                .HasKey(bu => new { bu.BlockerId, bu.Blocked });
+            modelBuilder.Entity<Spam>()
+                .HasOne(u => u.Blocker)
+                .WithMany(u => u.Spams)
+                .HasForeignKey(ui => ui.BlockerId);
 
 
 
