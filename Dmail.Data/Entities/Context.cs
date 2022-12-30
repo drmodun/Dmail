@@ -21,6 +21,7 @@ namespace Dmail.Data.Entities
         public DbSet<Message> Messages => Set<Message>();
         public DbSet<EventsUsers> EventUsers => Set<EventsUsers>();
         public DbSet<MessagesReceivers> MessagesReceivers => Set<MessagesReceivers>();
+        public DbSet<Spam> Spam => Set<Spam>();
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<User>()
@@ -38,6 +39,8 @@ namespace Dmail.Data.Entities
             modelBuilder.Entity<Event>()
                 .HasOne(s => s.Sender)
                 .WithMany(e => e.Events);
+            modelBuilder.Entity<EventsUsers>()
+                .Property(u => u.Accepted);
             modelBuilder.Entity<User>()
                 .Property(x=>x._password)
                 .IsRequired();
@@ -47,6 +50,8 @@ namespace Dmail.Data.Entities
                 .HasForeignKey(mi => mi.SenderId);
             modelBuilder.Entity<MessagesReceivers>()
                 .HasKey(eu => new { eu.ReceiverId, eu.MessageId });
+            modelBuilder.Entity<MessagesReceivers>()
+                .Property(x => x.Read);
             modelBuilder.Entity<MessagesReceivers>()
                 .HasOne(u => u.Message)
                 .WithMany(u => u.MessagesReceivers)
