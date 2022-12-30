@@ -3,6 +3,7 @@ using System;
 using Dmail.Data.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,10 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Dmail.Data.Migrations
 {
     [DbContext(typeof(DmailContext))]
-    partial class DmailContextModelSnapshot : ModelSnapshot
+    [Migration("20221230014613_MessagesAttempt1")]
+    partial class MessagesAttempt1
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -80,33 +82,18 @@ namespace Dmail.Data.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<int>("SenderId")
-                        .HasColumnType("integer");
-
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<int?>("UserId")
+                        .HasColumnType("integer");
+
                     b.HasKey("Id");
 
-                    b.HasIndex("SenderId");
+                    b.HasIndex("UserId");
 
                     b.ToTable("Messages");
-                });
-
-            modelBuilder.Entity("Dmail.Data.Entities.Models.MessagesReceivers", b =>
-                {
-                    b.Property<int>("ReceiverId")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("MessageId")
-                        .HasColumnType("integer");
-
-                    b.HasKey("ReceiverId", "MessageId");
-
-                    b.HasIndex("MessageId");
-
-                    b.ToTable("MessagesReceivers");
                 });
 
             modelBuilder.Entity("Dmail.Data.Entities.Models.User", b =>
@@ -162,42 +149,14 @@ namespace Dmail.Data.Migrations
 
             modelBuilder.Entity("Dmail.Data.Entities.Models.Message", b =>
                 {
-                    b.HasOne("Dmail.Data.Entities.Models.User", "Sender")
+                    b.HasOne("Dmail.Data.Entities.Models.User", null)
                         .WithMany("Messages")
-                        .HasForeignKey("SenderId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Sender");
-                });
-
-            modelBuilder.Entity("Dmail.Data.Entities.Models.MessagesReceivers", b =>
-                {
-                    b.HasOne("Dmail.Data.Entities.Models.Message", "Message")
-                        .WithMany("MessagesReceivers")
-                        .HasForeignKey("MessageId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Dmail.Data.Entities.Models.User", "Receiver")
-                        .WithMany("MessagesReceivers")
-                        .HasForeignKey("ReceiverId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Message");
-
-                    b.Navigation("Receiver");
+                        .HasForeignKey("UserId");
                 });
 
             modelBuilder.Entity("Dmail.Data.Entities.Models.Event", b =>
                 {
                     b.Navigation("EventUsers");
-                });
-
-            modelBuilder.Entity("Dmail.Data.Entities.Models.Message", b =>
-                {
-                    b.Navigation("MessagesReceivers");
                 });
 
             modelBuilder.Entity("Dmail.Data.Entities.Models.User", b =>
@@ -207,8 +166,6 @@ namespace Dmail.Data.Migrations
                     b.Navigation("Events");
 
                     b.Navigation("Messages");
-
-                    b.Navigation("MessagesReceivers");
                 });
 #pragma warning restore 612, 618
         }

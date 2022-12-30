@@ -20,6 +20,7 @@ namespace Dmail.Data.Entities
         public DbSet<Event> Events => Set<Event>();
         public DbSet<Message> Messages => Set<Message>();
         public DbSet<EventsUsers> EventUsers => Set<EventsUsers>();
+        public DbSet<MessagesReceivers> MessagesReceivers => Set<MessagesReceivers>();
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<User>()
@@ -40,6 +41,26 @@ namespace Dmail.Data.Entities
             modelBuilder.Entity<User>()
                 .Property(x=>x._password)
                 .IsRequired();
+            modelBuilder.Entity<Message>()
+                .HasOne(s => s.Sender)
+                .WithMany(e => e.Messages)
+                .HasForeignKey(mi => mi.SenderId);
+            modelBuilder.Entity<MessagesReceivers>()
+                .HasKey(eu => new { eu.ReceiverId, eu.MessageId });
+            modelBuilder.Entity<MessagesReceivers>()
+                .HasOne(u => u.Message)
+                .WithMany(u => u.MessagesReceivers)
+                .HasForeignKey(ui => ui.MessageId);
+            modelBuilder.Entity<MessagesReceivers>()
+                .HasOne(e => e.Receiver)
+                .WithMany(e => e.MessagesReceivers)
+                .HasForeignKey(ei => ei.ReceiverId);
+
+
+
+
+
+
             base.OnModelCreating(modelBuilder);
         }
     }
