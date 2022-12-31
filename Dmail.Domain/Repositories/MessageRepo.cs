@@ -24,6 +24,7 @@ namespace Dmail.Domain.Repositories
             if (senderId==null)
                 return ResponseType.NotFound;
             var iteration = 0;
+            DbContext.Messages.Add(message);
             foreach (var item in message.MessagesReceivers)
             {
 
@@ -35,11 +36,11 @@ namespace Dmail.Domain.Repositories
                         var remove = DbContext.MessagesReceivers.Find(DbContext.MessagesReceivers.Count()-1-i);
                         DbContext.MessagesReceivers.Remove(remove);
                     }
+                    DbContext.Messages.Remove(message);
                     return ResponseType.ValidationFailed;
                 }
                 iteration++;
             }
-            DbContext.Messages.Add(message);
             return SaveChanges();
 
         }
