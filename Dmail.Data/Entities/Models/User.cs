@@ -5,6 +5,11 @@
         public int Id { get; set; }
         public string Email { get; set; }
         public string _password { get; set;}
+        public User(string email, string password) {
+
+               Email = email;
+            _password = password;
+        }
 
         public ICollection<Spam> Spams = new List<Spam>();
         public ICollection<EventsUsers> EventUsers { get; set; } = new List<EventsUsers>();

@@ -1,4 +1,5 @@
 ﻿using Dmail.Data.Entities.Models;
+using Dmail.Data.Seeds;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.Extensions.Configuration;
@@ -68,9 +69,7 @@ namespace Dmail.Data.Entities
                 .HasForeignKey(ui => ui.BlockerId);
 
 
-
-
-
+            Seeder.Seed(modelBuilder);
             base.OnModelCreating(modelBuilder);
         }
     }
