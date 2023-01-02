@@ -1,6 +1,7 @@
 ﻿using Dmail.Data.Entities;
 using Dmail.Data.Entities.Models;
 using Dmail.Domain.Enums;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -78,5 +79,8 @@ namespace Dmail.Domain.Repositories
                 return ResponseType.ValidationFailed;
             return ResponseType.Success;
         }
+        public User? GetUser(int id) => DbContext.Users.Find(id);
+        public ICollection<User> AllUsers() => DbContext.Users.ToList();
+
     }
 }

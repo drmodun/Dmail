@@ -11,6 +11,9 @@ namespace Dmail.Domain.Repositories
 {
     public  class MessageRepo : BaseRepo
     {
+        public Message? GetMessage(int id) => DbContext.Messages.Find(id);
+        public ICollection<Message> GetMessages() => DbContext.Messages.ToList();
+
         public MessageRepo(DmailContext dbContext) : base(dbContext)
         {
 
