@@ -27,5 +27,23 @@ namespace Dmail.Domain.Repositories
             DbContext.EventUsers.Add(connection);
             return SaveChanges();
         }
+        public ResponseType Delete(int id)
+        {
+            var connectionToRemove = DbContext.EventUsers.Find(id);
+            if (connectionToRemove == null)
+                return ResponseType.NotFound;
+            DbContext.EventUsers.Remove(connectionToRemove);
+            return SaveChanges();
+        }
+        public ResponseType Update (int id, bool accepted)
+        {
+            var connectionToUpdate = DbContext.EventUsers.Find(id);
+            if (connectionToUpdate == null)
+                return ResponseType.NotFound;
+            if (connectionToUpdate.Accepted==accepted)
+                return ResponseType.NotChanged;
+            connectionToUpdate.Accepted = accepted;
+            return SaveChanges();
+        }
     }
 }

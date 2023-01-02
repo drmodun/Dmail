@@ -23,9 +23,11 @@ namespace Dmail.Domain.Repositories
                 return ResponseType.ValidationFailed;
             if (senderId==null)
                 return ResponseType.NotFound;
+            if (DbContext.Messages.Find(message.Id) != null)
+                return ResponseType.Exists;
             var iteration = 0;
             DbContext.Messages.Add(message);
-            foreach (var item in message.MessagesReceivers)
+            /*foreach (var item in message.MessagesReceivers)
             {
 
                 var response = connectionManager.Add(item);
@@ -40,7 +42,7 @@ namespace Dmail.Domain.Repositories
                     return ResponseType.ValidationFailed;
                 }
                 iteration++;
-            }
+            }*/
             return SaveChanges();
 
         }
