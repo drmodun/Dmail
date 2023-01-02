@@ -69,5 +69,14 @@ namespace Dmail.Domain.Repositories
             blocker.Spams.Add(spammer);
             return SaveChanges();
         }
+        public ResponseType Auth(string email, string password)
+        {
+            var account = DbContext.Users.FirstOrDefault(x=>x.Email==email);
+            if (account == null)
+                return ResponseType.NotFound;
+            if (account._password != password)
+                return ResponseType.ValidationFailed;
+            return ResponseType.Success;
+        }
     }
 }

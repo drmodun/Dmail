@@ -1,8 +1,13 @@
-﻿namespace Dmail.Presentation.Menus
+﻿using Dmail.Data.Entities;
+using Dmail.Domain.Enums;
+using Dmail.Domain.Repositories;
+
+namespace Dmail.Presentation.Menus
 {
     public static class MainMenu
     {
         public static int _choice;
+        public static UserRepo userRepo;
         public static void Content()
         {
             while (true)
@@ -38,7 +43,8 @@
                     case 3:
                         NewMessageMenu.Content();
                         break;
-
+                    case 7:
+                        return;
 
                 }
 
@@ -54,6 +60,37 @@
             if (confrimation == 1)
                 return true;
             return false;
+        }
+        public static void AuthMenu()
+        {
+            var authRepo = userRepo;
+            while (true)
+            {
+                Console.Clear();
+                Console.WriteLine("Autentikacija");
+                Console.WriteLine("Upišite email i šifru vešeg računa");
+                Console.WriteLine("Email: ");
+                var email = Console.ReadLine();
+                Console.WriteLine("Šifra: ");
+                var password = Console.ReadLine();
+                var response = authRepo.Auth(email, password);
+                if (response == ResponseType.NotFound)
+                {
+                    Console.WriteLine("Nije pronađen račun povezan na taj email");
+                    Console.ReadLine();
+                    continue;
+                }
+                else if (response == ResponseType.ValidationFailed)
+                {
+                    Console.WriteLine("Nije upisana točna šifra");
+                    Console.ReadLine();
+                    continue;
+                }
+                //Add known account when I add account actions
+                Content();
+                break;
+
+            }
         }
     }
 }
