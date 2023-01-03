@@ -5,4 +5,4 @@ using Dmail.Domain.Repositories;
 
 MainMenu.userRepo = new UserRepo(DmailDbContextFactory.GetDmailContext());
 Console.WriteLine("Hello, World!");
-MainMenu.AuthMenu();
+MainMenu.Accounts();

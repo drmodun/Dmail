@@ -14,6 +14,7 @@ namespace Dmail.Domain.Repositories
     {
         public Event? GetEvent(int id) => DbContext.Events.Find(id);
         public ICollection<Event> GetEvents() => DbContext.Events.ToList();
+
         public EventRepo(DmailContext DbContext) : base(DbContext)
         {
 

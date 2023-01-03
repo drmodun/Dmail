@@ -81,6 +81,16 @@ namespace Dmail.Domain.Repositories
         }
         public User? GetUser(int id) => DbContext.Users.Find(id);
         public ICollection<User> AllUsers() => DbContext.Users.ToList();
+        public ResponseType CreateNewUser(string email, string password)
+        {
+            if (DbContext.Users.FirstOrDefault(x => x.Email == email) != null)
+                return ResponseType.Exists;
+            var user = new User(password, email) {
+                Id = DbContext.Users.OrderBy(x => x.Id).Last().Id + 1
+            };
+            Add(user);
+            return ResponseType.Success;
+        }
 
     }
 }
