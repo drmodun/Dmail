@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace Dmail.Domain.Repositories
 {
-    public class UserRepo : BaseRepo 
+    public class UserRepo : BaseRepo
     {
         public UserRepo(DmailContext dbContext) : base(dbContext)
         {
@@ -35,9 +35,9 @@ namespace Dmail.Domain.Repositories
             var userToUpdate = DbContext.Users.Find(id);
             if (userToUpdate == null)
                 return ResponseType.NotFound;
-            if (userToUpdate.Email==email)
+            if (userToUpdate.Email == email)
                 return ResponseType.NotChanged;
-            userToUpdate.Email= email;
+            userToUpdate.Email = email;
             return SaveChanges();
         }
         public ResponseType UpdatePassword(int id, string password)
@@ -72,7 +72,7 @@ namespace Dmail.Domain.Repositories
         }
         public ResponseType Auth(string email, string password)
         {
-            var account = DbContext.Users.FirstOrDefault(x=>x.Email==email);
+            var account = DbContext.Users.FirstOrDefault(x => x.Email == email);
             if (account == null)
                 return ResponseType.NotFound;
             if (account._password != password)
@@ -85,12 +85,17 @@ namespace Dmail.Domain.Repositories
         {
             if (DbContext.Users.FirstOrDefault(x => x.Email == email) != null)
                 return ResponseType.Exists;
-            var user = new User(password, email) {
+            var user = new User(email, password) {
                 Id = DbContext.Users.OrderBy(x => x.Id).Last().Id + 1
             };
             Add(user);
             return ResponseType.Success;
         }
 
+        public int GetIdByEmail(string email){
+            var checkEmail = DbContext.Users.FirstOrDefault(x => x.Email == email);
+            if (checkEmail == null)
+                return -1;
+            return checkEmail.Id;}
     }
 }

@@ -25,6 +25,7 @@ namespace Dmail.Domain.Repositories
             var blocked = DbContext.Users.Find(spam.Blocked);
             if (blocked == null)
                 return ResponseType.NotFound;
+            DbContext.Spam.Add(spam);
             return SaveChanges();
         }
         public ResponseType Delete(int id)
@@ -45,6 +46,23 @@ namespace Dmail.Domain.Repositories
                 return ResponseType.NotChanged;
             connectionToUpdate.IsBlocked = blocked;
             return SaveChanges();
+        }
+        public ResponseType TryAdd(int blockerId, int blockedId)
+        {
+            if (blockedId < 0 || blockedId > DbContext.Spam.Count() + 1)
+                return ResponseType.ValidationFailed;
+            if (blockedId<0 || blockedId>DbContext.Spam.Count()+1)
+                return ResponseType.ValidationFailed;
+            var spam = new Spam()
+            {
+                BlockerId = blockerId,
+                Blocked = blockedId,
+                IsBlocked = true
+            };
+            if (DbContext.Spam.Find(blockerId, blockedId) != null)
+                return ResponseType.Exists;
+            Add(spam);
+            return ResponseType.Success;
         }
     }
 }
