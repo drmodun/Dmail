@@ -28,9 +28,9 @@ namespace Dmail.Domain.Repositories
             DbContext.Spam.Add(spam);
             return SaveChanges();
         }
-        public ResponseType Delete(int id)
+        public ResponseType Delete(int blockerid, int blockedId)
         {
-            var connectionToDelete = DbContext.Spam.Find(id);
+            var connectionToDelete = DbContext.Spam.Find(blockedId,blockedId);
             if (connectionToDelete == null)
                 return ResponseType.NotFound;
             DbContext.Spam.Remove(connectionToDelete);

@@ -15,10 +15,8 @@ namespace Dmail.Presentation.Menus
                 Console.Clear();
                 Console.WriteLine("Spam");
                 Console.WriteLine("Izaberite opciju");
-                Console.WriteLine("1 - Pročitana pošta");
-                Console.WriteLine("2 - Nepročitana pošta");
-                Console.WriteLine("3 - Pošta određenoga pošiljatelja");
-                Console.WriteLine("0 - Povratak na glavni menu");
+                Console.WriteLine("1 - Blokiraj račun");
+                Console.WriteLine("2 - Odblokiraj račun");
                 int.TryParse(Console.ReadLine(), out _choice);
                 if (_choice < 0)
                 {
@@ -28,8 +26,10 @@ namespace Dmail.Presentation.Menus
                 else if (_choice == 0)
 
                     return;
-                else if (_choice == 3)
+                else if (_choice == 1)
                     AddSpamConnection(MainMenu.userRepo, spamRepo);
+                else if (_choice == 2)
+
                 continue;
             }
         }
@@ -84,6 +84,40 @@ namespace Dmail.Presentation.Menus
 
             }
 
+        }
+        public static void RemoveSpamConnection(UserRepo userRepo, SpamRepo spamRepo)
+        {
+            while (true)
+            {
+                Console.Clear();
+                Console.WriteLine("Odblokiraj račun");
+                Console.WriteLine("Upišite email računa kojega želite odblokirati (upišite 0 za povrataak na prijašnji menu)");
+                var email = Console.ReadLine();
+                if (email == "0")
+                    return;
+                var blocked = userRepo.GetIdByEmail(email);
+                if (blocked == -1)
+                {
+                    Console.WriteLine("Taj Mail ne postoji");
+                    Console.ReadLine();
+                    continue;
+                }
+                var confirmation = MainMenu.ConfirmationDialog();
+                if (!confirmation)
+                    continue;
+                var check = spamRepo.Delete(AccountMenus.UserId, blocked);
+                if (check == ResponseType.NotFound)
+                {
+                    Console.WriteLine("Spam lista ne sadrži tog korisnika");
+                    Console.ReadLine();
+                    continue;
+                }
+                Console.WriteLine("Uspješno odblokiran korisnik "+email);
+                Console.ReadLine();
+                return;
+                
+                
+            }
         }
     }
 }

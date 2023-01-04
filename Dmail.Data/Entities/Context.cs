@@ -40,6 +40,12 @@ namespace Dmail.Data.Entities
             modelBuilder.Entity<Event>()
                 .HasOne(s => s.Sender)
                 .WithMany(e => e.Events);
+            modelBuilder.Entity<Event>()
+                .Property(s => s.CreatedAt);
+            modelBuilder.Entity<Event>()
+                .HasOne(e=>e.Sender)
+                .WithMany(e=>e.Events)
+                .HasForeignKey(x => x.SenderId);
             modelBuilder.Entity<EventsUsers>()
                 .Property(u => u.Accepted);
             modelBuilder.Entity<User>()

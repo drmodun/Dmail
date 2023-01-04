@@ -28,9 +28,14 @@ namespace Dmail.Presentation.Menus
                     Console.ReadLine();
                 }
                 else if (_choice == 0)
-                    
                     return;
+                switch (_choice)
+                {
+                    case 1:
+
                 }
+            }
+            
         }
     }
 }

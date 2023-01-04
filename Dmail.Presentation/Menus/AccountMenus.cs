@@ -3,6 +3,7 @@ using Dmail.Domain.Repositories;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Policy;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -11,7 +12,7 @@ namespace Dmail.Presentation.Menus
     public static class AccountMenus
     {
         public static int UserId = 0;
-
+        public static int OtherUserId = 0;
         public static void NewAccount(UserRepo userRepo)
         {
             var createRepo = userRepo;
