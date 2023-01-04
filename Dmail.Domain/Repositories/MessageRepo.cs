@@ -24,11 +24,10 @@ namespace Dmail.Domain.Repositories
         }
         public ResponseType Add(Message message)
         {
-            var senderId = DbContext.Users.Find(message.SenderId);
+            var helper = new DbContextOptionsBuilder();
+            helper.EnableSensitiveDataLogging(true);
             if (message.Title.Length == 0 || message.Body.Length == 0)
                 return ResponseType.ValidationFailed;
-            if (senderId == null)
-                return ResponseType.NotFound;
             if (DbContext.Messages.Find(message.Id) != null)
                 return ResponseType.Exists;
             DbContext.Messages.Add(message);
@@ -159,20 +158,21 @@ namespace Dmail.Domain.Repositories
             messages.OrderBy(x => x.CreatedAt).ToList();
             return messages;
         }
-        public ResponseType NewMessage(int senderId, int receiverId, string title, string body)
+        public int NewMessage(int senderId, int receiverId, string title, string body)
         {
-            var tempUser = RepositoryFactory.Create<UserRepo>();
             var message = new Message()
             {
-                Id = DbContext.Messages.Count()+1,
                 Title = title,
                 Body = body,
                 SenderId = senderId,
-                Sender = tempUser.GetUser(senderId),
-                CreatedAt = DateTime.Now,
+                CreatedAt = DateTime.UtcNow,
             };
-            var check = Add(message);
-            return check;
+            var check =Add(message);
+            if (check!=ResponseType.Success)
+            {
+                return -1;
+            }
+            return message.Id;
 
         }
     }

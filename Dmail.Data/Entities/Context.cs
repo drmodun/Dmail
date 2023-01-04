@@ -47,6 +47,8 @@ namespace Dmail.Data.Entities
                 .WithMany(e=>e.Events)
                 .HasForeignKey(x => x.SenderId);
             modelBuilder.Entity<EventsUsers>()
+                .Property(x => x.Read);
+            modelBuilder.Entity<EventsUsers>()
                 .Property(u => u.Accepted);
             modelBuilder.Entity<User>()
                 .Property(x=>x._password)
@@ -76,6 +78,7 @@ namespace Dmail.Data.Entities
 
 
             Seeder.Seed(modelBuilder);
+            
             base.OnModelCreating(modelBuilder);
         }
     }

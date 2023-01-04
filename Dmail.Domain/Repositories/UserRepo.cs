@@ -86,14 +86,13 @@ namespace Dmail.Domain.Repositories
             if (DbContext.Users.FirstOrDefault(x => x.Email == email) != null)
                 return ResponseType.Exists;
             var user = new User(email, password) {
-                Id = DbContext.Users.OrderBy(x => x.Id).Last().Id + 1
             };
             Add(user);
             return ResponseType.Success;
         }
 
         public int GetIdByEmail(string email){
-            var checkEmail = DbContext.Users.FirstOrDefault(x => x.Email == email);
+            var checkEmail = DbContext.Users.AsNoTracking().FirstOrDefault(x => x.Email == email);
             if (checkEmail == null)
                 return -1;
             return checkEmail.Id;}

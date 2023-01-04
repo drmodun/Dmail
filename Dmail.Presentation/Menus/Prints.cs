@@ -11,10 +11,21 @@ namespace Dmail.Presentation.Menus
     {
         public static void PrintMessage(MessagePrint messageToPrint)
         {
-            Console.WriteLine(messageToPrint.Title);
-            Console.WriteLine(messageToPrint.Body);
-            Console.WriteLine(messageToPrint.SenderEmail);
-            Console.WriteLine(messageToPrint.RecipientId);
+            Console.WriteLine("Naslov: "+messageToPrint.Title);
+            Console.WriteLine("Pošiljatelj: " + messageToPrint.SenderEmail);
+        }
+        public static void PrintDetailedMessage(MessagePrint messageToPrint)
+        {
+            Console.WriteLine("Naslov: "+messageToPrint.Title);
+            Console.WriteLine("Poruka: "+messageToPrint.Body);
+            Console.WriteLine("Poslano na: "+messageToPrint.CreatedAt);
+            Console.WriteLine("Pošiljatelj: "+messageToPrint.SenderEmail);
+            Console.WriteLine("Primatelj: "+messageToPrint.RecipientId);
+        }
+        public static void PrintAsSender(MessagePrint messageToPrint)
+        {
+            Console.WriteLine("Naslov: "+messageToPrint.Title);
+//
         }
     }
 }

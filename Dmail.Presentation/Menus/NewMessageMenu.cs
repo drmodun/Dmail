@@ -82,18 +82,40 @@ namespace Dmail.Presentation.Menus
                 var body = Console.ReadLine();
                 if (body=="0")
                     return;
-                foreach(var item in emailIds)
+                var check1 = 0;
+                var confirmation = MainMenu.ConfirmationDialog();
+                if (!confirmation)
                 {
-                    var check1 = messageRepo.NewMessage(AccountMenus.UserId, item, title, body);
-                    var check2 = messageReceiversRepo.NewConnection(AccountMenus.UserId, item);
-                    if (check1!=ResponseType.Success || check2 != ResponseType.Success)
+                    return;
+                }
+                foreach (var item in emailIds)
+                {
+                    check1 = messageRepo.NewMessage(AccountMenus.UserId, item, title, body);
+                    if (check1 ==-1)
                     {
+                        Console.WriteLine("Došlo je do problema pri pravljenju poruke");
+                        Console.WriteLine(check1.ToString());
+                        Console.ReadLine();
+                        break;
+                    }
+                    var check2 = messageReceiversRepo.NewConnection(check1, item);
+                    if (check1 == -1 || check2!=ResponseType.Success)
+                    {
+                        Console.WriteLine(check2.ToString());
+                        Console.WriteLine(check1.ToString());
                         Console.WriteLine($"Došlo je do greške pri pravljenju maila osobi {userRepo.GetUser(item).Email}");
                         Console.ReadLine();
                         continue;
                     }
 
                 }
+                if (check1 != -1)
+                {
+                    Console.WriteLine("Uspješno napravljenja poruka i poslan mail");
+                    Console.ReadLine();
+                    return;
+                }
+
                 return;
 
             }

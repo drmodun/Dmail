@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Dmail.Domain.Repositories;
 using Dmail.Presentation;
+using Dmail.Domain.Factories;
 namespace Dmail.Presentation.Menus
 {
     public class IncomingMessageMenu
@@ -33,6 +34,10 @@ namespace Dmail.Presentation.Menus
                 switch (_choice)
                 {
                     case 1:
+                        SeenMessages(MainMenu.userRepo, new MessageRepo(DmailDbContextFactory.GetDmailContext()));
+                        break;
+                    case 2:
+                        GetNonSeenMessages(MainMenu.userRepo, new MessageRepo(DmailDbContextFactory.GetDmailContext()));
                         break;
 
                 }
@@ -41,7 +46,33 @@ namespace Dmail.Presentation.Menus
         }
         public static void SeenMessages(UserRepo userRepo, MessageRepo messageRepo)
         {
-           
+            Console.WriteLine("Pročitane poruke");
+            Console.WriteLine("Upišite broj poruke ili događaja za više akcija");
+            var messages = messageRepo.GetSeenMessages(AccountMenus.UserId);
+            var iterator = 1;
+            foreach (var message in messages)
+            {
+                Console.WriteLine(iterator.ToString());
+                Prints.PrintMessage(message);
+                Console.WriteLine(" ");
+                iterator++;
+            }
+            Console.ReadLine();
+        }
+        public static void GetNonSeenMessages(UserRepo userRepo, MessageRepo messageRepo)
+        {
+            Console.WriteLine("Nepročitane poruke");
+            Console.WriteLine("Upišite broj poruke ili događaja za više akcija");
+            var messages = messageRepo.GetNonSeenMessages(AccountMenus.UserId);
+            var iterator = 1;
+            foreach (var message in messages)
+            {
+                Console.WriteLine(iterator.ToString());
+                Prints.PrintMessage(message);
+                Console.WriteLine(" ");
+                iterator++;
+            }
+            Console.ReadLine();
         }
     }
 }

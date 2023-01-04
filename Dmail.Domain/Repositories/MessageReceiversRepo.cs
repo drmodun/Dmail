@@ -55,8 +55,6 @@ namespace Dmail.Domain.Repositories
                 MessageId = messageId,
                 ReceiverId = receiverId,
                 Read = false,
-                Message = DbContext.Messages.Find(messageId),
-                Receiver = DbContext.Users.Find(receiverId)
             };
             var check = Add(connection);
             return check;
