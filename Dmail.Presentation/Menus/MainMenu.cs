@@ -1,6 +1,6 @@
-﻿using Dmail.Data.Entities;
-using Dmail.Domain.Enums;
+﻿using Dmail.Domain.Enums;
 using Dmail.Domain.Repositories;
+using Dmail.Domain.Factories;
 using Microsoft.EntityFrameworkCore.Query.SqlExpressions;
 
 namespace Dmail.Presentation.Menus
@@ -39,9 +39,12 @@ namespace Dmail.Presentation.Menus
                         IncomingMessageMenu.Content();
                         break;
                     case 2:
-                        SpamMenu.Content();
+                        OutgoingMessageMenu.GetSentMessages(userRepo, new MessageRepo(DmailDbContextFactory.GetDmailContext()));
                         break;
                     case 3:
+                        SpamMenu.Content();
+                        break;
+                    case 4:
                         NewMessageMenu.Content();
                         break;
                     case 7:

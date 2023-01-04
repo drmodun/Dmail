@@ -25,6 +25,7 @@ namespace Dmail.Presentation.Menus
         public static void PrintAsSender(MessagePrint messageToPrint)
         {
             Console.WriteLine("Naslov: "+messageToPrint.Title);
+            Console.WriteLine("Primatelji: "+string.Join(", ",messageToPrint.AllEmails));
 //
         }
     }

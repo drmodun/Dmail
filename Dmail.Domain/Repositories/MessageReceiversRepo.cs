@@ -36,16 +36,16 @@ namespace Dmail.Domain.Repositories
             return SaveChanges();
 
         }
-        public ResponseType Update(int messageId, int receiverId)
+        public ResponseType Update(int messageId, int receiverId, bool read)
         {
             var receiver = DbContext.Users.Find(receiverId);
             var message = DbContext.Messages.Find(messageId);
             if (message == null || receiver == null)
                 return ResponseType.NotFound;
-            var connectionToUpdate = DbContext.MessagesReceivers.Find(new { receiver, messageId });
-            if (connectionToUpdate.Read)
+            var connectionToUpdate = DbContext.MessagesReceivers.Find(receiverId,messageId);
+            if (connectionToUpdate.Read==read)
                 return ResponseType.NotChanged;
-            connectionToUpdate.Read = true;
+            connectionToUpdate.Read = read;
             return SaveChanges();
         }
         public ResponseType NewConnection(int messageId, int receiverId)
@@ -59,5 +59,6 @@ namespace Dmail.Domain.Repositories
             var check = Add(connection);
             return check;
         }
+
     }
 }
