@@ -1,15 +1,19 @@
 ﻿using Dmail.Data.Entities;
 using Dmail.Data.Entities.Models;
 using Dmail.Domain.Enums;
+using Dmail.Domain.Factories;
+using Dmail.Domain.Models;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 namespace Dmail.Domain.Repositories
 {
-    public  class MessageRepo : BaseRepo
+    public class MessageRepo : BaseRepo
     {
         public Message? GetMessage(int id) => DbContext.Messages.Find(id);
         public ICollection<Message> GetMessages() => DbContext.Messages.ToList();
@@ -20,36 +24,18 @@ namespace Dmail.Domain.Repositories
         }
         public ResponseType Add(Message message)
         {
-            var connectionManager = new MessageReceiversRepo(DbContext);
-            var senderId=DbContext.Users.Find(message.SenderId);
-            if (message.Title.Length == 0 || message.Body.Length == 0 || message.MessagesReceivers.Count==0)
+            var senderId = DbContext.Users.Find(message.SenderId);
+            if (message.Title.Length == 0 || message.Body.Length == 0)
                 return ResponseType.ValidationFailed;
-            if (senderId==null)
+            if (senderId == null)
                 return ResponseType.NotFound;
             if (DbContext.Messages.Find(message.Id) != null)
                 return ResponseType.Exists;
-            var iteration = 0;
             DbContext.Messages.Add(message);
-            /*foreach (var item in message.MessagesReceivers)
-            {
-
-                var response = connectionManager.Add(item);
-                if (response == ResponseType.NotFound || response == ResponseType.ValidationFailed)
-                {
-                    for (var i=0; i<iteration; i++)
-                    {
-                        var remove = DbContext.MessagesReceivers.Find(DbContext.MessagesReceivers.Count()-1-i);
-                        DbContext.MessagesReceivers.Remove(remove);
-                    }
-                    DbContext.Messages.Remove(message);
-                    return ResponseType.ValidationFailed;
-                }
-                iteration++;
-            }*/
             return SaveChanges();
 
         }
-        
+
         public ResponseType Delete(int message)
         {
             var messageToDelete = DbContext.Messages.Find(message);
@@ -58,7 +44,136 @@ namespace Dmail.Domain.Repositories
             DbContext.Messages.Remove(messageToDelete);
             return SaveChanges();
         }
-        
 
+        public ICollection<MessagePrint> GetSeenMessages(int receiverId)
+        {
+            var messages = DbContext.MessagesReceivers.Where(x => x.ReceiverId == receiverId).
+                Where(x => x.Read == true)
+                .Join(DbContext.Messages, x => x.MessageId, m => m.Id, (x, m) => new { x, m }).
+                Select(f => new MessagePrint()
+                {
+                    Id = f.m.Id,
+                    Title = f.m.Title,
+                    Body = f.m.Body,
+                    SenderId = f.m.SenderId,
+                    SenderEmail = f.m.Sender.Email,
+                    RecipientId = receiverId,
+                    RecipientEmail = DbContext.Users.Find(receiverId).Email
+                }).ToList();
+            var events = DbContext.EventUsers.Where(x => x.UserId == receiverId)
+                .Where(x => x.Read == true)
+                .Join(DbContext.Events, x => x.EventId, e => e.Id, (x, e) => new { x, e })
+                .Select(f => new MessagePrint()
+                {
+                    Id = f.e.Id,
+                    Title = f.e.Title,
+                    Body = f.e.Body,
+                    SenderId = f.e.SenderId,
+                    SenderEmail = f.e.Sender.Email,
+                    AllEmails = f.e.EventUsers.Where(x => x.User.Id == receiverId).Select(c => c.UserId).ToList(),
+                    IsEvent = true,
+                    DateOfEvent = f.e.DateOfEvent
+                }).ToList();
+            foreach (var e in events)
+            {
+                messages.Add(e);
+            }
+            foreach (var item in messages)
+            {
+                if (DbContext.Spam.Find(receiverId, item.SenderId) != null)
+                    messages.Remove(item);
+            }
+            messages.OrderBy(x => x.CreatedAt).ToList();
+            return messages;
+        }
+
+        public ICollection<MessagePrint> GetNonSeenMessages(int receiverId)
+        {
+            var messages = DbContext.MessagesReceivers.Where(x => x.ReceiverId == receiverId).
+                Where(x => x.Read == false)
+                .Join(DbContext.Messages, x => x.MessageId, m => m.Id, (x, m) => new { x, m }).
+                Select(f => new MessagePrint()
+                {
+                    Id = f.m.Id,
+                    Title = f.m.Title,
+                    Body = f.m.Body,
+                    SenderId = f.m.SenderId,
+                    SenderEmail = f.m.Sender.Email,
+                    RecipientId = receiverId,
+                    RecipientEmail = DbContext.Users.Find(receiverId).Email
+                }).ToList();
+            var events = DbContext.EventUsers.Where(x => x.UserId == receiverId)
+                .Where(x => x.Read == false)
+                .Join(DbContext.Events, x => x.EventId, e => e.Id, (x, e) => new { x, e })
+                .Select(f => new MessagePrint()
+                {
+                    Id = f.e.Id,
+                    Title = f.e.Title,
+                    Body = f.e.Body,
+                    SenderId = f.e.SenderId,
+                    SenderEmail = f.e.Sender.Email,
+                    AllEmails = f.e.EventUsers.Where(x => x.User.Id == receiverId).Select(c => c.UserId).ToList(),
+                    IsEvent = true,
+                    DateOfEvent = f.e.DateOfEvent
+                }).ToList();
+            foreach (var e in events)
+            {
+                messages.Add(e);
+            }
+            messages.OrderBy(x => x.CreatedAt).ToList();
+            foreach (var item in messages)
+            {
+                if (DbContext.Spam.Find(receiverId, item.SenderId) != null)
+                    messages.Remove(item);
+            }
+            return messages;
+        }
+        public ICollection<MessagePrint> GetSentMessages(int senderId)
+        {
+            var messages = DbContext.Messages.Where(x => x.SenderId == senderId)
+                    .Select(f => new MessagePrint()
+                    {
+                        Id = f.Id,
+                        Title = f.Title,
+                        Body = f.Body,
+                        SenderId = f.SenderId,
+                        SenderEmail = f.Sender.Email,
+                        AllEmails = f.MessagesReceivers.Where(x => x.MessageId == f.Id).Select(c => c.ReceiverId).ToList(),
+                    }).ToList();
+            var events = DbContext.Events.Where(x => x.SenderId == senderId)
+                .Select(f => new MessagePrint()
+                {
+                    Id = f.Id,
+                    Title = f.Title,
+                    Body = f.Body,
+                    SenderId = f.SenderId,
+                    SenderEmail = f.Sender.Email,
+                    AllEmails = f.EventUsers.Where(x => x.UserId == f.Id).Select(c => c.UserId).ToList(),
+                    IsEvent = true,
+                    DateOfEvent = f.DateOfEvent
+                }).ToList();
+            foreach (var e in events)
+            {
+                messages.Add(e);
+            }
+            messages.OrderBy(x => x.CreatedAt).ToList();
+            return messages;
+        }
+        public ResponseType NewMessage(int senderId, int receiverId, string title, string body)
+        {
+            var tempUser = RepositoryFactory.Create<UserRepo>();
+            var message = new Message()
+            {
+                Id = DbContext.Messages.Count()+1,
+                Title = title,
+                Body = body,
+                SenderId = senderId,
+                Sender = tempUser.GetUser(senderId),
+                CreatedAt = DateTime.Now,
+            };
+            var check = Add(message);
+            return check;
+
+        }
     }
 }

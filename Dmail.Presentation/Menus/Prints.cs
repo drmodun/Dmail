@@ -9,6 +9,12 @@ namespace Dmail.Presentation.Menus
 {
     public static class Prints
     {
-        public PrintMessage(MessagePrint messageToPrint)
+        public static void PrintMessage(MessagePrint messageToPrint)
+        {
+            Console.WriteLine(messageToPrint.Title);
+            Console.WriteLine(messageToPrint.Body);
+            Console.WriteLine(messageToPrint.SenderEmail);
+            Console.WriteLine(messageToPrint.RecipientId);
+        }
     }
 }

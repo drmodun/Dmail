@@ -54,7 +54,7 @@ namespace Dmail.Data.Migrations
 
                     b.HasIndex("SenderId");
 
-                    b.ToTable("Events");
+                    b.ToTable("Events", (string)null);
                 });
 
             modelBuilder.Entity("Dmail.Data.Entities.Models.EventsUsers", b =>
@@ -72,7 +72,7 @@ namespace Dmail.Data.Migrations
 
                     b.HasIndex("EventId");
 
-                    b.ToTable("EventUsers");
+                    b.ToTable("EventUsers", (string)null);
                 });
 
             modelBuilder.Entity("Dmail.Data.Entities.Models.Message", b =>
@@ -101,7 +101,7 @@ namespace Dmail.Data.Migrations
 
                     b.HasIndex("SenderId");
 
-                    b.ToTable("Messages");
+                    b.ToTable("Messages", (string)null);
                 });
 
             modelBuilder.Entity("Dmail.Data.Entities.Models.MessagesReceivers", b =>
@@ -119,7 +119,7 @@ namespace Dmail.Data.Migrations
 
                     b.HasIndex("MessageId");
 
-                    b.ToTable("MessagesReceivers");
+                    b.ToTable("MessagesReceivers", (string)null);
                 });
 
             modelBuilder.Entity("Dmail.Data.Entities.Models.Spam", b =>
@@ -132,7 +132,7 @@ namespace Dmail.Data.Migrations
 
                     b.HasKey("BlockerId", "Blocked");
 
-                    b.ToTable("Spam");
+                    b.ToTable("Spam", (string)null);
                 });
 
             modelBuilder.Entity("Dmail.Data.Entities.Models.User", b =>
@@ -153,7 +153,7 @@ namespace Dmail.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Users");
+                    b.ToTable("Users", (string)null);
 
                     b.HasData(
                         new

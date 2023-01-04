@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Dmail.Domain.Repositories;
 using Dmail.Presentation;
 namespace Dmail.Presentation.Menus
 {
@@ -32,10 +33,15 @@ namespace Dmail.Presentation.Menus
                 switch (_choice)
                 {
                     case 1:
+                        break;
 
                 }
             }
             
+        }
+        public static void SeenMessages(UserRepo userRepo, MessageRepo messageRepo)
+        {
+           
         }
     }
 }

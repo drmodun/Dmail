@@ -48,5 +48,18 @@ namespace Dmail.Domain.Repositories
             connectionToUpdate.Read = true;
             return SaveChanges();
         }
+        public ResponseType NewConnection(int messageId, int receiverId)
+        {
+            var connection = new MessagesReceivers()
+            {
+                MessageId = messageId,
+                ReceiverId = receiverId,
+                Read = false,
+                Message = DbContext.Messages.Find(messageId),
+                Receiver = DbContext.Users.Find(receiverId)
+            };
+            var check = Add(connection);
+            return check;
+        }
     }
 }

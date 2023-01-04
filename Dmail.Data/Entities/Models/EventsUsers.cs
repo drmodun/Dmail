@@ -12,6 +12,7 @@ namespace Dmail.Data.Entities.Models
         public User User { get; set; }
         public Event Event{ get; set; }
         public int UserId { get; set; }
+        public bool Read;
         public bool Accepted ;
     }
 }

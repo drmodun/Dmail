@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -15,5 +16,9 @@ namespace Dmail.Domain.Models
         public string SenderEmail { get; set;}
         public int RecipientId;
         public string RecipientEmail { get; set; }
+        public DateTime CreatedAt { get; set; }
+        public bool IsEvent { get; set; }
+        public DateTime DateOfEvent;
+        public ICollection<int> AllEmails { get; set; }
     }
 }
