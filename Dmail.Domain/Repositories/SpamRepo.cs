@@ -65,11 +65,11 @@ namespace Dmail.Domain.Repositories
             Add(spam);
             return ResponseType.Success;
         }
-        public ICollection<MessagePrint> GetMessagesBySender(int receiverId, int senderId)
+        public ICollection<MessagePrint> GetMessagesBySender(int receiverId, string  sender)
         {
             var messages = DbContext.MessagesReceivers.Where(x => x.ReceiverId == receiverId)
                 .Join(DbContext.Messages, x => x.MessageId, m => m.Id, (x, m) => new { x, m })
-                .Where(f => f.m.SenderId == senderId)
+                .Where(f => f.m.Sender.Email.Contains(sender) == true)
                 .Select(f => new MessagePrint()
                 {
                     Id = f.m.Id,

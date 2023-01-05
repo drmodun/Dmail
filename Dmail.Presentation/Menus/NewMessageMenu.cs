@@ -23,14 +23,14 @@ namespace Dmail.Presentation.Menus
                 Console.WriteLine("1 - Nova pošta");
                 Console.WriteLine("0 - Main Menu");
                 int.TryParse(Console.ReadLine(), out _choice);
-                if (_choice<0 || _choice > 1)
+                if (_choice < 0 || _choice > 1)
                 {
                     Console.WriteLine("Nije upisan valjani broj");
                     Console.ReadLine();
                 }
                 if (_choice == 0)
                     return;
-                switch(_choice)
+                switch (_choice)
                 {
                     case 1:
                         NewMessage(MainMenu.userRepo, new MessageRepo(DmailDbContextFactory.GetDmailContext()), new MessageReceiversRepo(DmailDbContextFactory.GetDmailContext()));
@@ -49,10 +49,11 @@ namespace Dmail.Presentation.Menus
                 Console.WriteLine("Upišite ovdje podatke nove poruke, za povrataka upišite 0 u bilo koje polje");
                 Console.WriteLine("Upišite mailove ljudi kojima šaljete mail");
                 var emails = Console.ReadLine().Split(",");
-                var emailIds= new List<int>();
+                var emailIds = new List<int>();
                 if (emails.Contains("0"))
                     return;
-                foreach (var email in emails) {
+                foreach (var email in emails)
+                {
                     var id = userRepo.GetIdByEmail(email);
                     if (id == -1)
                     {
@@ -70,7 +71,7 @@ namespace Dmail.Presentation.Menus
                 }
                 Console.WriteLine("Upišite naslov maila:");
                 var title = Console.ReadLine();
-                if (title=="0")
+                if (title == "0")
                     return;
                 if (title.Trim().Length == 0)
                 {
@@ -80,7 +81,7 @@ namespace Dmail.Presentation.Menus
                 }
                 Console.WriteLine("Upišite tijelo maila");
                 var body = Console.ReadLine();
-                if (body=="0")
+                if (body == "0")
                     return;
                 var check1 = 0;
                 var confirmation = MainMenu.ConfirmationDialog();
@@ -90,8 +91,8 @@ namespace Dmail.Presentation.Menus
                 }
                 foreach (var item in emailIds)
                 {
-                    check1 = messageRepo.NewMessage(AccountMenus.UserId, item, title, body);
-                    if (check1 ==-1)
+                    check1 = messageRepo.NewMessage(AccountMenus.UserId, false, DateTime.MinValue, title, body);
+                    if (check1 == -1)
                     {
                         Console.WriteLine("Došlo je do problema pri pravljenju poruke");
                         Console.WriteLine(check1.ToString());
@@ -99,7 +100,100 @@ namespace Dmail.Presentation.Menus
                         break;
                     }
                     var check2 = messageReceiversRepo.NewConnection(check1, item);
-                    if (check1 == -1 || check2!=ResponseType.Success)
+                    if (check1 == -1 || check2 != ResponseType.Success)
+                    {
+                        Console.WriteLine(check2.ToString());
+                        Console.WriteLine(check1.ToString());
+                        Console.WriteLine($"Došlo je do greške pri pravljenju maila osobi {userRepo.GetUser(item).Email}");
+                        Console.ReadLine();
+                        continue;
+                    }
+
+                }
+                if (check1 != -1)
+                {
+                    Console.WriteLine("Uspješno napravljenja poruka i poslan mail");
+                    Console.ReadLine();
+                    return;
+                }
+
+                return;
+
+            }
+        }
+        public static void NewEvent(UserRepo userRepo, MessageRepo messageRepo, MessageReceiversRepo messageReceiversRepo)
+        {
+            while (true)
+            {
+                Console.WriteLine("Početak novog događaja");
+                Console.Clear();
+                Console.WriteLine("Nova poruka");
+                Console.WriteLine("Upišite ovdje podatke nove poruke, za povrataka upišite 0 u bilo koje polje");
+                Console.WriteLine("Upišite mailove ljudi kojima šaljete događaj");
+                var emails = Console.ReadLine().Split(",");
+                var emailIds = new List<int>();
+                if (emails.Contains("0"))
+                    return;
+                foreach (var email in emails)
+                {
+                    var id = userRepo.GetIdByEmail(email);
+                    if (id == -1)
+                    {
+                        Console.WriteLine("Neki od mailova ne postoje");
+                        Console.ReadLine();
+                        continue;
+                    }
+                    if (emailIds.Contains(id))
+                    {
+                        Console.WriteLine("Ne možete istoj osobi dva puta poslati isti mail");
+                        Console.ReadLine();
+                        continue;
+                    }
+                    emailIds.Add(id);
+                }
+                Console.WriteLine("Upišite naslov događaja:");
+                var title = Console.ReadLine();
+                if (title == "0")
+                    return;
+                if (title.Trim().Length == 0)
+                {
+                    Console.WriteLine("Netočan naslov događaja");
+                    Console.ReadLine();
+                    continue;
+                }
+                Console.WriteLine("Upišite vrijeme događaja");
+                var dateTry = Console.ReadLine();
+                string[] formats = { "dd/MM/yyyy", "dd/M/yyyy", "d/M/yyyy", "d/MM/yyyy",
+                    "dd/MM/yy", "dd/M/yy", "d/M/yy", "d/MM/yy", "dd/MM/yyyy HH:mm:ss","dd/MM/yyyy HH:mm", "dd/M/yyyy HH:mm", "d/M/yyyy HH:mm", "d/MM/yyyy HH:mm",
+                    "dd/MM/yy HH:mm", "dd/M/yy HH:mm", "d/M/yy HH:mm", "d/MM/yy HH:mm", "yyyy/MM/dd H:mm"}; 
+                var date = DateTime.MinValue;
+                DateTime.TryParseExact(dateTry, formats, System.Globalization.CultureInfo.InvariantCulture, System.Globalization.DateTimeStyles.None, out date);
+                if (date<DateTime.Now)
+                {
+                    Console.WriteLine("Nije upisan validan datum");
+                    Console.ReadLine();
+                    continue;
+                }
+                var dateConverted = date.ToUniversalTime();
+                var check1 = 0;
+                var confirmation = MainMenu.ConfirmationDialog();
+                if (!confirmation)
+                {
+                    return;
+                }
+                check1 = messageRepo.NewMessage(AccountMenus.UserId, true, dateConverted, title, "");
+                if (check1 == -1)
+                {
+                    Console.WriteLine("Došlo je do problema pri pravljenju poruke");
+                    Console.WriteLine(check1.ToString());
+                    Console.ReadLine();
+                    break;
+                }
+                foreach (var item in emailIds)
+                {
+                   
+                    var check2 = messageReceiversRepo.NewConnection(check1, item);
+                    if (check1 == -1 || check2 != ResponseType.Success)
                     {
                         Console.WriteLine(check2.ToString());
                         Console.WriteLine(check1.ToString());

@@ -41,6 +41,8 @@ namespace Dmail.Presentation.Menus
                 Console.WriteLine("Upišite ime kojeg računa želite blokirati");
                 Console.WriteLine("Upišite 0 za povratak na prijašnji menu");
                 var emailToBlock = Console.ReadLine();
+                if (emailToBlock == "0")
+                    return;
                 if (emailToBlock.Trim().Length == 0)
                 {
                     Console.WriteLine("Nije upisan pravilan email");

@@ -1,7 +1,10 @@
-﻿using Dmail.Domain.Repositories;
+﻿using Dmail.Domain.Enums;
+using Dmail.Domain.Models;
+using Dmail.Domain.Repositories;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -20,8 +23,68 @@ namespace Dmail.Presentation.Menus
                 Console.WriteLine(iterator.ToString());
                 Prints.PrintMessage(message);
                 Console.WriteLine(" ");
+                iterator++;
             }
             Console.ReadLine();
+            ChooseMessage(userRepo, messageRepo, IncomingMessageMenu.messageReceiversRepo, messages);
         }
+        public static void ChooseMessage(UserRepo userRepo, MessageRepo messageRepo, MessageReceiversRepo messageReceiversRepo, ICollection<MessagePrint> messages)
+        {
+            while (true)
+            {
+                Console.WriteLine("Detaljan ispis poruka");
+                Console.WriteLine("Upišite redni broj koje poruke želite pristupiti");
+                var select = Console.ReadLine();
+                var selectId = -1;
+                int.TryParse(select, out selectId);
+                if (selectId<=0)
+                {
+                    Console.WriteLine("Nije upisan validan broj poruke");
+                    Console.ReadLine();
+                    continue;
+                }
+                var message = messages.ElementAt(selectId - 1);
+                Console.WriteLine(AccountMenus.UserId.ToString()+" "+message.Id.ToString());
+                if (message.IsEvent)
+                    Prints.PrintDetailedEvent(message, true);
+                else
+                    Prints.PrintDetailedMessage(message);
+                while (true)
+                {
+                    Console.WriteLine("Akcije");
+                    Console.WriteLine("1 - Označi kao nepročitano");
+                    var choice = Console.ReadLine();
+                    int.TryParse(choice, out selectId);
+                    if (choice == "0")
+                        return;
+                    switch (selectId.ToString())
+                    {
+                        case "1":
+                            var confirmation = MainMenu.ConfirmationDialog();
+                            if (!confirmation)
+                                return;
+                            var check = ResponseType.Success;
+                            foreach (var item in message.AllEmails)
+                            {
+                                check = messageReceiversRepo.Delete(item, message.Id);
+                            }
+                            check = messageRepo.Delete(message.Id);
+                            if (check != ResponseType.Success)
+                            {
+                                Console.WriteLine("Nije moguće izbrisati poruku");
+                                Console.ReadLine();
+                                return;
+                            }
+
+                            return;
+                        default:
+                            Console.WriteLine("Krivi upis");
+                            Console.ReadLine();
+                            break;
+                    }
+                }
+            }
+        }
+
     }
 }

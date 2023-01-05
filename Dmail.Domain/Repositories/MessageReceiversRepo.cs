@@ -25,13 +25,13 @@ namespace Dmail.Domain.Repositories
             DbContext.MessagesReceivers.Add(messageReceivers);
             return SaveChanges();
         }
-        public ResponseType Delete(int messageId, int receiverId)
+        public ResponseType Delete(int receiverId, int messageId)
         {
             var receiver = DbContext.Users.Find(receiverId);
             var message = DbContext.Messages.Find(messageId);
             if (message == null || receiver == null)
                 return ResponseType.NotFound;
-            var connectionToRemove = DbContext.MessagesReceivers.Find(new { receiver, messageId });
+            var connectionToRemove = DbContext.MessagesReceivers.Find(receiverId, messageId);
             DbContext.MessagesReceivers.Remove(connectionToRemove);
             return SaveChanges();
 
@@ -59,6 +59,9 @@ namespace Dmail.Domain.Repositories
             var check = Add(connection);
             return check;
         }
-
+        public bool GetStatus(int receiverId, int messageId)
+        {
+            return DbContext.MessagesReceivers.Find(receiverId, messageId).Accepted;
+        }
     }
 }

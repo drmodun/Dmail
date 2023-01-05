@@ -47,6 +47,9 @@ namespace Dmail.Presentation.Menus
                     case 4:
                         NewMessageMenu.Content();
                         break;
+                    case 5:
+                        NewMessageMenu.NewEvent(userRepo, IncomingMessageMenu.messageRepo, IncomingMessageMenu.messageReceiversRepo);
+                        break;
                     case 7:
                         return;
 

@@ -24,9 +24,7 @@ namespace Dmail.Domain.Repositories
         }
         public ResponseType Add(Message message)
         {
-            var helper = new DbContextOptionsBuilder();
-            helper.EnableSensitiveDataLogging(true);
-            if (message.Title.Length == 0 || message.Body.Length == 0)
+            if (message.Title.Length == 0)
                 return ResponseType.ValidationFailed;
             if (DbContext.Messages.Find(message.Id) != null)
                 return ResponseType.Exists;
@@ -84,6 +82,7 @@ namespace Dmail.Domain.Repositories
                     SenderId = f.m.SenderId,
                     SenderEmail = f.m.Sender.Email,
                     RecipientId = receiverId,
+                    IsEvent=f.m.IsEvent,
                     RecipientEmail = DbContext.Users.Find(receiverId).Email,
                     AllEmails = f.m.MessagesReceivers.Where(x => x.MessageId == f.m.Id).Select(c => c.ReceiverId).ToList(),
                     DateOfEvent=f.m.DateOfEvent
@@ -107,15 +106,17 @@ namespace Dmail.Domain.Repositories
                         SenderId = f.SenderId,
                         SenderEmail = f.Sender.Email,
                         AllEmails = f.MessagesReceivers.Where(x => x.MessageId == f.Id).Select(c => c.ReceiverId).ToList(),
+                        IsEvent=f.IsEvent,
+                        DateOfEvent=f.DateOfEvent
                     }).ToList();
             messages.OrderBy(x => x.CreatedAt).ToList();
             return messages;
         }
-        public ICollection<MessagePrint> GetMessagesBySender(int receiverId, int senderId)
+        public ICollection<MessagePrint> GetMessagesBySender(int receiverId, string sender)
         {
             var messages = DbContext.MessagesReceivers.Where(x => x.ReceiverId == receiverId)
                 .Join(DbContext.Messages, x => x.MessageId, m => m.Id, (x, m) => new { x, m })
-                .Where(f => f.m.SenderId == senderId)
+                .Where(f=>f.m.Sender.Email.Contains(sender)==true)
                 .Select(f => new MessagePrint()
                 {
                     Id = f.m.Id,
@@ -139,7 +140,7 @@ namespace Dmail.Domain.Repositories
             return messages;
 
         }
-        public int NewMessage(int senderId, int receiverId, string title, string body)
+        public int NewMessage(int senderId, bool isEvent,  DateTime dateOfEvent, string title, string body)
         {
             var message = new Message()
             {
@@ -147,14 +148,19 @@ namespace Dmail.Domain.Repositories
                 Body = body,
                 SenderId = senderId,
                 CreatedAt = DateTime.UtcNow,
+                IsEvent= isEvent,
             };
+            if (isEvent)
+                message.DateOfEvent= dateOfEvent;
             var check =Add(message);
             if (check!=ResponseType.Success)
             {
+                Console.WriteLine(check.ToString());
                 return -1;
             }
             return message.Id;
 
         }
+        
     }
 }
