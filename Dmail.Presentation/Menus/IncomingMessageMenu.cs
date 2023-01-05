@@ -108,7 +108,7 @@ namespace Dmail.Presentation.Menus
             var senderId = -1;
             Console.WriteLine("Poruke od specifičnog pošiljatelja");
             var sender = Console.ReadLine();
-            ICollection<MessagePrint> messages = null;
+            ICollection<MessagePrint> messages;
             if (!spam)
             {
                 messages = messageRepo.GetMessagesBySender(AccountMenus.UserId, sender);
@@ -253,7 +253,7 @@ namespace Dmail.Presentation.Menus
                                     return;
                                 if (confirm == "1")
                                     answer = "Prihvaćen";
-                                var newMessage = messageRepo.NewMessage(AccountMenus.UserId, false, DateTime.UtcNow, $"Odgovor na {message.Title}", answer);
+                                var newMessage = messageRepo.NewMessage(AccountMenus.UserId, false, DateTime.MinValue, $"Odgovor na {message.Title}", answer);
                                 var check3 = messageReceiversRepo.UpdateAnswerToEvent(message.Id, AccountMenus.UserId, confirm == "1");
                                 if (check3 != ResponseType.Success)
                                 {

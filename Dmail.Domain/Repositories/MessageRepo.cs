@@ -9,6 +9,8 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Runtime.CompilerServices;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
 namespace Dmail.Domain.Repositories
@@ -55,6 +57,7 @@ namespace Dmail.Domain.Repositories
                     SenderId = f.m.SenderId,
                     SenderEmail = f.m.Sender.Email,
                     RecipientId = receiverId,
+                    CreatedAt= f.m.CreatedAt,
                     RecipientEmail = DbContext.Users.Find(receiverId).Email,
                     IsEvent= f.m.IsEvent,
                     AllEmails = f.m.MessagesReceivers.Where(x => x.MessageId == f.m.Id).Select(c => c.ReceiverId).ToList(),
@@ -84,6 +87,7 @@ namespace Dmail.Domain.Repositories
                     SenderEmail = f.m.Sender.Email,
                     RecipientId = receiverId,
                     IsEvent=f.m.IsEvent,
+                    CreatedAt= f.m.CreatedAt,
                     RecipientEmail = DbContext.Users.Find(receiverId).Email,
                     AllEmails = f.m.MessagesReceivers.Where(x => x.MessageId == f.m.Id).Select(c => c.ReceiverId).ToList(),
                     DateOfEvent=f.m.DateOfEvent
@@ -106,6 +110,7 @@ namespace Dmail.Domain.Repositories
                         Body = f.Body,
                         SenderId = f.SenderId,
                         SenderEmail = f.Sender.Email,
+                        CreatedAt = f.CreatedAt,
                         AllEmails = f.MessagesReceivers.Where(x => x.MessageId == f.Id).Select(c => c.ReceiverId).ToList(),
                         IsEvent=f.IsEvent,
                         DateOfEvent=f.DateOfEvent
@@ -148,11 +153,10 @@ namespace Dmail.Domain.Repositories
                 Title = title,
                 Body = body,
                 SenderId = senderId,
-                CreatedAt = DateTime.UtcNow,
+                CreatedAt = DateTime.Now.ToUniversalTime(),
                 IsEvent= isEvent,
             };
-            if (isEvent)
-                message.DateOfEvent= dateOfEvent;
+            if (isEvent) { message.DateOfEvent = dateOfEvent; }
             var check =Add(message);
             if (check!=ResponseType.Success)
             {
@@ -162,6 +166,31 @@ namespace Dmail.Domain.Repositories
             return message.Id;
 
         }
-        
+        public ICollection<UserPrint> GetSenderUsers(int receiverId)
+        {
+            var users = DbContext.MessagesReceivers.Where(x => x.ReceiverId == receiverId)
+                .Join(DbContext.Messages, x => x.MessageId, y => y.Id, (x, y) => new { x, y })
+                .Select(f => new UserPrint()
+                {
+                    Id = f.y.SenderId,
+                    Email = f.y.Sender.Email,
+                    Blocked = DbContext.Spam.FirstOrDefault(x=>x.BlockerId==receiverId && x.Blocked==f.y.SenderId) != default
+                }).Distinct().ToList();
+            return users;
+        }
+
+        public ICollection<UserPrint> GetReceiverUsers(int senderId)
+        {
+            var users = DbContext.Messages.Where(x=>x.SenderId==senderId)
+                .Join(DbContext.MessagesReceivers, x=>x.Id, y=>y.MessageId, (x,y)=> new {x,y})
+                .Select(f => new UserPrint()
+                {
+                    Id = f.y.ReceiverId,
+                    Email = f.y.Receiver.Email,
+                    Blocked = DbContext.Spam.FirstOrDefault(x => x.BlockerId == senderId && x.Blocked == f.y.ReceiverId) != default
+                }).Distinct().ToList();
+            return users;
+        }
+
     }
 }

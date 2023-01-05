@@ -51,7 +51,7 @@ namespace Dmail.Presentation.Menus
                         NewMessageMenu.NewEvent(userRepo, IncomingMessageMenu.messageRepo, IncomingMessageMenu.messageReceiversRepo);
                         break;
                     case 6:
-                        SpamMenu.Content();
+                        SettingsMenu.Content();
                         break;
                     case 7:
                         return;

@@ -102,6 +102,7 @@ namespace Dmail.Domain.Repositories
                     SenderEmail = f.m.Sender.Email,
                     RecipientId = receiverId,
                     RecipientEmail = DbContext.Users.Find(receiverId).Email,
+                    CreatedAt=f.m.CreatedAt,
                     AllEmails = f.m.MessagesReceivers.Where(x => x.MessageId == f.m.Id).Select(c => c.ReceiverId).ToList(),
                     DateOfEvent = f.m.DateOfEvent
                 }).ToList();

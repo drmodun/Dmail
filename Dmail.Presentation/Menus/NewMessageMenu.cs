@@ -98,18 +98,19 @@ namespace Dmail.Presentation.Menus
             {
                 return false;
             }
+            check1 = messageRepo.NewMessage(AccountMenus.UserId, false, DateTime.MinValue, title, body);
+            if (check1 == -1)
+            {
+                Console.WriteLine("Došlo je do problema pri pravljenju poruke");
+                Console.WriteLine(check1.ToString());
+                Console.ReadLine();
+                return false;
+            }
             foreach (var item in emailIds)
             {
-                check1 = messageRepo.NewMessage(AccountMenus.UserId, false, DateTime.MinValue, title, body);
-                if (check1 == -1)
-                {
-                    Console.WriteLine("Došlo je do problema pri pravljenju poruke");
-                    Console.WriteLine(check1.ToString());
-                    Console.ReadLine();
-                    break;
-                }
+                
                 var check2 = messageReceiversRepo.NewConnection(check1, item);
-                if (check1 == -1 || check2 != ResponseType.Success)
+                if (check1 == -1 || check2 != ResponseType.Success) 
                 {
                     Console.WriteLine(check2.ToString());
                     Console.WriteLine(check1.ToString());
