@@ -6,6 +6,7 @@
         public int ReceiverId;
         public Message? Message;
         public User? Receiver;
-        public bool Read;
+        public bool Accepted=false;
+        public bool Read=false;
     }
 }

@@ -19,7 +19,9 @@ namespace Dmail.Presentation.Menus
             {
                 Console.WriteLine(iterator.ToString());
                 Prints.PrintMessage(message);
+                Console.WriteLine(" ");
             }
+            Console.ReadLine();
         }
     }
 }

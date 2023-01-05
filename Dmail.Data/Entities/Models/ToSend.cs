@@ -15,5 +15,8 @@ namespace Dmail.Data.Entities.Models
         public string Title { get; set; }
         public string Body { get; set; }
         public DateTime CreatedAt { get; set; }
+        public bool IsEvent = false;
+        public DateTime DateOfEvent = DateTime.UtcNow;
+
     }
 }

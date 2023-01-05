@@ -80,27 +80,10 @@ namespace Dmail.Domain.Repositories
                     AllEmails = f.m.MessagesReceivers.Where(n => n.MessageId == f.m.Id).Select(c => c.ReceiverId).ToList(),
                     RecipientId = receiverId,
                     RecipientEmail = DbContext.Users.Find(receiverId).Email,
-                    IsEvent = false,
-                    CreatedAt = f.m.CreatedAt
+                    IsEvent = f.m.IsEvent,
+                    CreatedAt = f.m.CreatedAt,
+                    DateOfEvent= f.m.DateOfEvent,
                 }).ToList();
-            var events = DbContext.EventUsers.Where(x => x.UserId == receiverId)
-                .Join(DbContext.Events, x => x.EventId, e => e.Id, (x, e) => new { x, e })
-                .Where(g => g.e.SenderId == senderId)
-                .Select(f => new MessagePrint()
-                {
-                    Id = f.e.Id,
-                    Title = f.e.Title,
-                    Body = f.e.Body,
-                    SenderId = f.e.SenderId,
-                    SenderEmail = f.e.Sender.Email,
-                    AllEmails = f.e.EventUsers.Where(x => x.EventId == f.e.Id).Select(c => c.UserId).ToList(),
-                    IsEvent = true,
-                    DateOfEvent = f.e.DateOfEvent
-                }).ToList();
-            foreach (var e in events)
-            {
-                messages.Add(e);
-            }
             foreach (var item in messages)
             {
                 if (DbContext.Spam.Find(receiverId, item.SenderId) == null)
@@ -123,26 +106,10 @@ namespace Dmail.Domain.Repositories
                     SenderId = f.m.SenderId,
                     SenderEmail = f.m.Sender.Email,
                     RecipientId = receiverId,
-                    RecipientEmail = DbContext.Users.Find(receiverId).Email
+                    RecipientEmail = DbContext.Users.Find(receiverId).Email,
+                    AllEmails = f.m.MessagesReceivers.Where(x => x.MessageId == f.m.Id).Select(c => c.ReceiverId).ToList(),
+                    DateOfEvent = f.m.DateOfEvent
                 }).ToList();
-            var events = DbContext.EventUsers.Where(x => x.UserId == receiverId)
-                .Where(x => x.Read == true)
-                .Join(DbContext.Events, x => x.EventId, e => e.Id, (x, e) => new { x, e })
-                .Select(f => new MessagePrint()
-                {
-                    Id = f.e.Id,
-                    Title = f.e.Title,
-                    Body = f.e.Body,
-                    SenderId = f.e.SenderId,
-                    SenderEmail = f.e.Sender.Email,
-                    AllEmails = f.e.EventUsers.Where(x => x.EventId == f.e.Id).Select(c => c.UserId).ToList(),
-                    IsEvent = true,
-                    DateOfEvent = f.e.DateOfEvent
-                }).ToList();
-            foreach (var e in events)
-            {
-                messages.Add(e);
-            }
             foreach (var item in messages)
             {
                 if (DbContext.Spam.Find(receiverId, item.SenderId) == null)
@@ -165,26 +132,10 @@ namespace Dmail.Domain.Repositories
                     SenderId = f.m.SenderId,
                     SenderEmail = f.m.Sender.Email,
                     RecipientId = receiverId,
-                    RecipientEmail = DbContext.Users.Find(receiverId).Email
+                    RecipientEmail = DbContext.Users.Find(receiverId).Email,
+                    AllEmails = f.m.MessagesReceivers.Where(x => x.MessageId == f.m.Id).Select(c => c.ReceiverId).ToList(),
+                    DateOfEvent = f.m.DateOfEvent
                 }).ToList();
-            var events = DbContext.EventUsers.Where(x => x.UserId == receiverId)
-                .Where(x => x.Read == false)
-                .Join(DbContext.Events, x => x.EventId, e => e.Id, (x, e) => new { x, e })
-                .Select(f => new MessagePrint()
-                {
-                    Id = f.e.Id,
-                    Title = f.e.Title,
-                    Body = f.e.Body,
-                    SenderId = f.e.SenderId,
-                    SenderEmail = f.e.Sender.Email,
-                    AllEmails = f.e.EventUsers.Where(x => x.EventId == f.e.Id).Select(c => c.UserId).ToList(),
-                    IsEvent = true,
-                    DateOfEvent = f.e.DateOfEvent
-                }).ToList();
-            foreach (var e in events)
-            {
-                messages.Add(e);
-            }
             messages.OrderBy(x => x.CreatedAt).ToList();
             foreach (var item in messages)
             {

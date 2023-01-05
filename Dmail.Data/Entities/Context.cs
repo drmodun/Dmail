@@ -18,38 +18,13 @@ namespace Dmail.Data.Entities
         }
 
         public DbSet<User> Users => Set<User>();
-        public DbSet<Event> Events => Set<Event>();
         public DbSet<Message> Messages => Set<Message>();
-        public DbSet<EventsUsers> EventUsers => Set<EventsUsers>();
         public DbSet<MessagesReceivers> MessagesReceivers => Set<MessagesReceivers>();
         public DbSet<Spam> Spam => Set<Spam>();
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<User>()
                 .HasKey(x => x.Id);
-            modelBuilder.Entity<EventsUsers>()
-                .HasKey(eu => new { eu.UserId, eu.EventId });
-            modelBuilder.Entity<EventsUsers>()
-                .HasOne(u=>u.User)
-                .WithMany(u=>u.EventUsers)
-                .HasForeignKey(ui=>ui.UserId);
-            modelBuilder.Entity<EventsUsers>()
-                .HasOne(e => e.Event)
-                .WithMany(e => e.EventUsers)
-                .HasForeignKey(ei => ei.EventId);
-            modelBuilder.Entity<Event>()
-                .HasOne(s => s.Sender)
-                .WithMany(e => e.Events);
-            modelBuilder.Entity<Event>()
-                .Property(s => s.CreatedAt);
-            modelBuilder.Entity<Event>()
-                .HasOne(e=>e.Sender)
-                .WithMany(e=>e.Events)
-                .HasForeignKey(x => x.SenderId);
-            modelBuilder.Entity<EventsUsers>()
-                .Property(x => x.Read);
-            modelBuilder.Entity<EventsUsers>()
-                .Property(u => u.Accepted);
             modelBuilder.Entity<User>()
                 .Property(x=>x._password)
                 .IsRequired();
@@ -57,6 +32,10 @@ namespace Dmail.Data.Entities
                 .HasOne(s => s.Sender)
                 .WithMany(e => e.Messages)
                 .HasForeignKey(mi => mi.SenderId);
+            modelBuilder.Entity<Message>()
+                .Property(x => x.IsEvent);
+            modelBuilder.Entity<Message>()
+                    .Property(x => x.DateOfEvent);
             modelBuilder.Entity<MessagesReceivers>()
                 .HasKey(eu => new { eu.ReceiverId, eu.MessageId });
             modelBuilder.Entity<MessagesReceivers>()
@@ -69,6 +48,8 @@ namespace Dmail.Data.Entities
                 .HasOne(e => e.Receiver)
                 .WithMany(e => e.MessagesReceivers)
                 .HasForeignKey(ei => ei.ReceiverId);
+            modelBuilder.Entity<MessagesReceivers>()
+                .Property(x => x.Accepted);
             modelBuilder.Entity<Spam>()
                 .HasKey(bu => new { bu.BlockerId, bu.Blocked });
             modelBuilder.Entity<Spam>()
