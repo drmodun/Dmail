@@ -42,13 +42,16 @@ namespace Dmail.Presentation.Menus
                         OutgoingMessageMenu.GetSentMessages(userRepo, new MessageRepo(DmailDbContextFactory.GetDmailContext()));
                         break;
                     case 3:
-                        SpamMenu.Content();
+                        SpamMessageMenu.Content();
                         break;
                     case 4:
                         NewMessageMenu.Content();
                         break;
                     case 5:
                         NewMessageMenu.NewEvent(userRepo, IncomingMessageMenu.messageRepo, IncomingMessageMenu.messageReceiversRepo);
+                        break;
+                    case 6:
+                        SpamMenu.Content();
                         break;
                     case 7:
                         return;

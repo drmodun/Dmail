@@ -173,7 +173,7 @@ namespace Dmail.Presentation.Menus
                 int.TryParse(select, out selectId);
                 if (selectId == 0)
                     return;
-                if (selectId < 0)
+                if (selectId < 0 || selectId>messages.Count())
                 {
                     Console.WriteLine("Nije upisan validan broj poruke");
                     Console.ReadLine();
@@ -221,6 +221,7 @@ namespace Dmail.Presentation.Menus
                                 Console.ReadLine();
                                 break;
                             }
+                            messages.Remove(message);
                             Console.WriteLine("Uspješno dodana spam konekcija između korisnika " + userRepo.GetUser(AccountMenus.UserId).Email + " i " + message.SenderEmail);
                             Console.ReadLine();
                             break;
@@ -231,6 +232,7 @@ namespace Dmail.Presentation.Menus
                             var check2 = messageReceiversRepo.Delete(AccountMenus.UserId, message.Id);
                             if (message.AllEmails.Count() == 1)
                                 messageRepo.Delete(message.Id);
+                            messages.Remove(message);
                             if (check2 != ResponseType.Success)
                             {
                                 Console.WriteLine("Došlo je do pogreške pri brisanju maila");
@@ -272,7 +274,7 @@ namespace Dmail.Presentation.Menus
 
 
                             }
-                            NewMessageMenu.NewMessage(userRepo, messageRepo, messageReceiversRepo);
+                            NewMessageMenu.NewMessageContent(new List<int>() { message.SenderId}, userRepo, messageRepo, messageReceiversRepo);
                             break;
                         default:
                             Console.WriteLine("Nije upisan pravi input");

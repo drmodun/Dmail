@@ -26,31 +26,22 @@ namespace Dmail.Presentation.Menus
         {
             Console.WriteLine("Poslane poruke");
             Console.WriteLine("Upišite broj poruke koje želite urediti");
-            var iterator = 1;
             var messages = messageRepo.GetSentMessages(AccountMenus.UserId);
-            foreach (var message in messages)
-            {
-                Console.WriteLine(iterator.ToString());
-                Prints.PrintAsSender(message);
-                Console.WriteLine(" ");
-                iterator++;
-            }
-            Console.ReadLine();
-            ChooseMessage(userRepo, messageRepo, IncomingMessageMenu.messageReceiversRepo, messages);
+            Console.Clear();
+            MessagesMenu(messages);
         }
         public static void ChooseMessage(UserRepo userRepo, MessageRepo messageRepo, MessageReceiversRepo messageReceiversRepo, ICollection<MessagePrint> messages)
         {
             while (true)
             {
                 Console.WriteLine("Detaljan ispis poruka");
-                Console.WriteLine("Upišite redni broj koje poruke želite pristupiti");
                 var select = Console.ReadLine();
                 var selectId = -1;
                 int.TryParse(select, out selectId);
                 if (selectId == 0) {
                     return;
                 }
-                if (selectId<0)
+                if (selectId<0 || selectId>messages.Count())
                 {
                     Console.WriteLine("Nije upisan validan broj poruke");
                     Console.ReadLine();
@@ -82,6 +73,7 @@ namespace Dmail.Presentation.Menus
                                 check = messageReceiversRepo.Delete(item, message.Id);
                             }
                             check = messageRepo.Delete(message.Id);
+                            messages.Remove(message);
                             if (check != ResponseType.Success)
                             {
                                 Console.WriteLine("Nije moguće izbrisati poruku");
@@ -95,6 +87,42 @@ namespace Dmail.Presentation.Menus
                             Console.ReadLine();
                             break;
                     }
+                }
+            }
+        }
+        public static void MessagesMenu(ICollection<MessagePrint> messages)
+        {
+            while (true)
+            {
+                Console.Clear();
+                PrintMessages(messages);
+                Console.WriteLine("Upišite što želite s porukama");
+                Console.WriteLine("1 - Detaljni ispis");
+                Console.WriteLine("2 - Ispiši samo mailove ");
+                Console.WriteLine("3 - Ispiši samo događaje");
+                Console.WriteLine("0 ili bilo koji drugi input - Nazad");
+                var choice = Console.ReadLine();
+                switch (choice)
+                {
+                    case "1":
+                        ChooseMessage(MainMenu.userRepo, IncomingMessageMenu.messageRepo, IncomingMessageMenu.messageReceiversRepo, messages);
+                        break;
+                    case "2":
+                        var messagesCopy = messages.Where(x => x.IsEvent == false).ToList();
+                        Console.Clear();
+                        Console.WriteLine("Ispis svih mailova");
+                        PrintMessages(messagesCopy);
+                        ChooseMessage(MainMenu.userRepo, IncomingMessageMenu.messageRepo, IncomingMessageMenu.messageReceiversRepo, messagesCopy);
+                        break;
+                    case "3":
+                        var eventsCopy = messages.Where(x => x.IsEvent == true).ToList();
+                        Console.Clear();
+                        Console.WriteLine("Ispis svih događaja");
+                        PrintMessages(eventsCopy);
+                        ChooseMessage(MainMenu.userRepo, IncomingMessageMenu.messageRepo, IncomingMessageMenu.messageReceiversRepo, eventsCopy);
+                        break;
+                    default:
+                        return;
                 }
             }
         }
