@@ -12,6 +12,16 @@ namespace Dmail.Presentation.Menus
 {
     public static class OutgoingMessageMenu
     {
+        public static void PrintMessages(ICollection<MessagePrint> messages)
+        {
+            var iterator = 0;
+            foreach (var message in messages) {
+                iterator++;
+                var emails = Prints.TranslatedEmails(message.AllEmails);
+                Console.WriteLine($"{iterator} {message.Title} {string.Join(", ", emails)}");
+                Console.WriteLine(" ");
+                    }
+        }
         public static void GetSentMessages(UserRepo userRepo, MessageRepo messageRepo)
         {
             Console.WriteLine("Poslane poruke");
@@ -21,7 +31,7 @@ namespace Dmail.Presentation.Menus
             foreach (var message in messages)
             {
                 Console.WriteLine(iterator.ToString());
-                Prints.PrintMessage(message);
+                Prints.PrintAsSender(message);
                 Console.WriteLine(" ");
                 iterator++;
             }
@@ -37,7 +47,10 @@ namespace Dmail.Presentation.Menus
                 var select = Console.ReadLine();
                 var selectId = -1;
                 int.TryParse(select, out selectId);
-                if (selectId<=0)
+                if (selectId == 0) {
+                    return;
+                }
+                if (selectId<0)
                 {
                     Console.WriteLine("Nije upisan validan broj poruke");
                     Console.ReadLine();
@@ -52,7 +65,7 @@ namespace Dmail.Presentation.Menus
                 while (true)
                 {
                     Console.WriteLine("Akcije");
-                    Console.WriteLine("1 - Označi kao nepročitano");
+                    Console.WriteLine("1 - Izbriši poruku");
                     var choice = Console.ReadLine();
                     int.TryParse(choice, out selectId);
                     if (choice == "0")

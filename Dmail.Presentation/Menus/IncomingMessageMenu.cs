@@ -12,6 +12,7 @@ using Dmail.Domain.Models;
 using Dmail.Domain.Enums;
 using System.Runtime.InteropServices;
 using Microsoft.EntityFrameworkCore.Diagnostics;
+using Dmail.Data.Entities.Models;
 
 namespace Dmail.Presentation.Menus
 {
@@ -43,78 +44,123 @@ namespace Dmail.Presentation.Menus
                 switch (_choice)
                 {
                     case 1:
-                        GetSeenMessages(MainMenu.userRepo, new MessageRepo(DmailDbContextFactory.GetDmailContext()));
+                        GetSeenMessages(MainMenu.userRepo, new MessageRepo(DmailDbContextFactory.GetDmailContext()), false);
                         break;
                     case 2:
-                        GetNonSeenMessages(MainMenu.userRepo, new MessageRepo(DmailDbContextFactory.GetDmailContext()), new MessageReceiversRepo(DmailDbContextFactory.GetDmailContext()));
+                        GetNonSeenMessages(MainMenu.userRepo, new MessageRepo(DmailDbContextFactory.GetDmailContext()), new MessageReceiversRepo(DmailDbContextFactory.GetDmailContext()), false);
                         break;
                     case 3:
-                        GetMessagesbySender(MainMenu.userRepo, new MessageRepo(DmailDbContextFactory.GetDmailContext()), new MessageReceiversRepo(DmailDbContextFactory.GetDmailContext()));
+                        GetMessagesbySender(MainMenu.userRepo, new MessageRepo(DmailDbContextFactory.GetDmailContext()), false);
+                        break;
+                    default:
+                        Console.WriteLine("Nije upisan točni input");
+                        Console.ReadLine();
                         break;
                 }
             }
 
         }
-        public static void GetSeenMessages(UserRepo userRepo, MessageRepo messageRepo)
+        public static void PrintMessages(ICollection<MessagePrint> messages)
+        {
+            var iterator = 0;
+            foreach (var message in messages)
+            {
+                iterator++;
+                Console.WriteLine($"{iterator} {message.Title} {message.SenderEmail}");
+                Console.WriteLine(" ");
+            }
+        }
+        public static void GetSeenMessages(UserRepo userRepo, MessageRepo messageRepo, bool spam)
         {
             Console.WriteLine("Pročitane poruke");
-            Console.WriteLine("Upišite broj poruke ili događaja za više akcija");
-            var messages = messageRepo.GetSeenMessages(AccountMenus.UserId);
-            var iterator = 1;
-            foreach (var message in messages)
+            ICollection<MessagePrint> messages = null;
+            if (!spam)
             {
-                Console.WriteLine(iterator.ToString());
-                Prints.PrintMessage(message);
-                Console.WriteLine(" ");
-                iterator++;
+                messages = messageRepo.GetSeenMessages(AccountMenus.UserId);
             }
-            Console.ReadLine();
-            ChooseMessage(userRepo, messageRepo, messageReceiversRepo, messages);
+            else
+            {
+                messages = SpamMenu.spamRepo.GetSeenMessages(AccountMenus.UserId);
+            }
+            Console.Clear();
+            MessagesMenu(messages);
 
         }
-        public static void GetNonSeenMessages(UserRepo userRepo, MessageRepo messageRepo, MessageReceiversRepo messageReceiversRepo)
+        public static void GetNonSeenMessages(UserRepo userRepo, MessageRepo messageRepo, MessageReceiversRepo messageReceiversRepo, bool spam)
         {
+            Console.Clear();
             Console.WriteLine("Nepročitane poruke");
-            Console.WriteLine("Upišite broj poruke ili događaja za više akcija");
-            var messages = messageRepo.GetNonSeenMessages(AccountMenus.UserId);
-            var iterator = 1;
-            foreach (var message in messages)
+            ICollection<MessagePrint> messages = null;
+            if (!spam)
             {
-                Console.WriteLine(iterator.ToString());
-                Prints.PrintMessage(message);
-                Console.WriteLine(" ");
-                iterator++;
+                messages = messageRepo.GetNonSeenMessages(AccountMenus.UserId);
             }
-            Console.ReadLine();
-            ChooseMessage(userRepo, messageRepo, messageReceiversRepo, messages);
+            else
+            {
+                messages = SpamMenu.spamRepo.GetNonSeenMessages(AccountMenus.UserId);
+            };
+            Console.Clear();
+            MessagesMenu(messages);
 
         }
-        public static void GetMessagesbySender(UserRepo userRepo, MessageRepo messageRepo, MessageReceiversRepo messageReceiversRepo)
+        public static void GetMessagesbySender(UserRepo userRepo, MessageRepo messageRepo, bool spam)
         {
             var senderId = -1;
             Console.WriteLine("Poruke od specifičnog pošiljatelja");
             var sender = Console.ReadLine();
-            var messages = messageRepo.GetMessagesBySender(AccountMenus.UserId, sender);
+            ICollection<MessagePrint> messages = null;
+            if (!spam)
+            {
+                messages = messageRepo.GetMessagesBySender(AccountMenus.UserId, sender);
+            }
+            else
+            {
+                messages = SpamMenu.spamRepo.GetMessagesBySender(AccountMenus.UserId, sender);
+            }
             if (messages.Count() == 0)
             {
                 Console.WriteLine("Nije pronađena ni jedna poruka poslana od tog maila");
                 Console.ReadLine();
                 return;
             }
-            var iterator = 1;
-            foreach (var message in messages)
+            Console.Clear();
+            MessagesMenu(messages);
+
+        }
+        public static void MessagesMenu(ICollection<MessagePrint> messages)
+        {
+            while (true)
             {
-                Console.WriteLine(iterator.ToString());
-                Prints.PrintMessage(message);
-                Console.WriteLine(" ");
-                messageReceiversRepo.Update(message.Id, AccountMenus.UserId, true);
-                iterator++;
-
-
+                PrintMessages(messages);
+                Console.WriteLine("Upišite što želite s porukama");
+                Console.WriteLine("1 - Detaljni ispis");
+                Console.WriteLine("2 - Ispiši samo mailove ");
+                Console.WriteLine("3 - Ispiši samo događaje");
+                Console.WriteLine("0 ili bilo koji drugi input - Nazad");
+                var choice = Console.ReadLine();
+                switch (choice)
+                {
+                    case "1":
+                        ChooseMessage(MainMenu.userRepo, messageRepo, messageReceiversRepo, messages);
+                        break;
+                    case "2":
+                        var messagesCopy = messages.Where(x => x.IsEvent == false).ToList();
+                        Console.Clear();
+                        Console.WriteLine("Ispis svih mailova");
+                        PrintMessages(messagesCopy);
+                        ChooseMessage(MainMenu.userRepo, messageRepo, messageReceiversRepo, messagesCopy);
+                        break;
+                    case "3":
+                        var eventsCopy = messages.Where(x => x.IsEvent == true).ToList();
+                        Console.Clear();
+                        Console.WriteLine("Ispis svih događaja");
+                        PrintMessages(eventsCopy);
+                        ChooseMessage(MainMenu.userRepo, messageRepo, messageReceiversRepo, eventsCopy);
+                        break;
+                    default:
+                        return;
+                }
             }
-            Console.ReadLine();
-            ChooseMessage(userRepo, messageRepo, messageReceiversRepo, messages);
-
         }
         public static void ChooseMessage(UserRepo userRepo, MessageRepo messageRepo, MessageReceiversRepo messageReceiversRepo, ICollection<MessagePrint> messages)
         {
@@ -125,13 +171,14 @@ namespace Dmail.Presentation.Menus
                 var select = Console.ReadLine();
                 var selectId = -1;
                 int.TryParse(select, out selectId);
-                if (selectId <= 0)
+                if (selectId == 0)
+                    return;
+                if (selectId < 0)
                 {
                     Console.WriteLine("Nije upisan validan broj poruke");
                     Console.ReadLine();
                     continue;
                 }
-                Console.WriteLine("HELP");
                 var message = messages.ElementAt(selectId-1);
                 messageReceiversRepo.Update(message.Id, AccountMenus.UserId, true);
                 if (message.IsEvent)
@@ -205,14 +252,14 @@ namespace Dmail.Presentation.Menus
                                 if (confirm == "1")
                                     answer = "Prihvaćen";
                                 var newMessage = messageRepo.NewMessage(AccountMenus.UserId, false, DateTime.UtcNow, $"Odgovor na {message.Title}", answer);
-                                var check3 = messageReceiversRepo.Update(message.Id, AccountMenus.UserId, confirm == "1");
+                                var check3 = messageReceiversRepo.UpdateAnswerToEvent(message.Id, AccountMenus.UserId, confirm == "1");
                                 if (check3 != ResponseType.Success)
                                 {
                                     Console.WriteLine("Već ste odgovorili na ovaj event istim odgovorom, ako želite poslati novu poruku na event onda morate imati izmijenjen odgovor");
                                     Console.ReadLine();
                                     break;
                                 }
-                                var check4 = messageReceiversRepo.NewConnection(AccountMenus.UserId, newMessage);
+                                var check4 = messageReceiversRepo.NewConnection(newMessage, message.SenderId);
                                 if (check4 != ResponseType.Success)
                                 {
                                     Console.WriteLine("Došlo je do pogrešku pri odgovaranju na poruku");

@@ -23,12 +23,21 @@ namespace Dmail.Presentation.Menus
                     Console.WriteLine("Nije upisan valjani input");
                     Console.ReadLine();
                 }
-                else if (_choice == 0)
-
-                    return;
-                else if (_choice == 1)
-                    AddSpamConnection(MainMenu.userRepo, spamRepo);
-                else if (_choice == 2)
+                switch (_choice)
+                {
+                    case 0:
+                        return;
+                    case 1:
+                        RemoveSpamConnection(MainMenu.userRepo, spamRepo); 
+                        break;
+                    case 2:
+                        AddSpamConnection(MainMenu.userRepo, spamRepo);
+                        break;
+                    default:
+                        Console.WriteLine("Nije upisan točan input");
+                        Console.ReadLine();
+                        break;
+                }
 
                 continue;
             }

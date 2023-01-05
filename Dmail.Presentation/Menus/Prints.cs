@@ -34,12 +34,6 @@ namespace Dmail.Presentation.Menus
             Console.WriteLine("Poslano na: "+messageToPrint.CreatedAt);
             Console.WriteLine("Pošiljatelj: "+messageToPrint.SenderEmail);
         }
-        public static void PrintAsSender(MessagePrint messageToPrint)
-        {
-            Console.WriteLine("Naslov: "+messageToPrint.Title);
-            Console.WriteLine("Primatelji: "+string.Join(", ",messageToPrint.AllEmails));
-//
-        }
         public static void PrintDetailedEvent(MessagePrint messageToPrint, bool accepted)
         {
             Console.Clear();
@@ -53,7 +47,7 @@ namespace Dmail.Presentation.Menus
             else
                 Console.WriteLine("Nije prihvaćen");
         }
-        public static void PrintOutgoingMessages(MessagePrint messageToPrint)
+        public static void PrintAsSender(MessagePrint messageToPrint)
         {
            
                 Console.WriteLine("Naslov: " + messageToPrint.Title);

@@ -29,9 +29,9 @@ namespace Dmail.Domain.Repositories
             DbContext.Spam.Add(spam);
             return SaveChanges();
         }
-        public ResponseType Delete(int blockerid, int blockedId)
+        public ResponseType Delete(int blockerId, int blockedId)
         {
-            var connectionToDelete = DbContext.Spam.Find(blockedId,blockedId);
+            var connectionToDelete = DbContext.Spam.Find(blockerId,blockedId);
             if (connectionToDelete == null)
                 return ResponseType.NotFound;
             DbContext.Spam.Remove(connectionToDelete);
@@ -84,12 +84,7 @@ namespace Dmail.Domain.Repositories
                     CreatedAt = f.m.CreatedAt,
                     DateOfEvent= f.m.DateOfEvent,
                 }).ToList();
-            foreach (var item in messages)
-            {
-                if (DbContext.Spam.Find(receiverId, item.SenderId) == null)
-                    messages.Remove(item);
-            }
-            messages.OrderBy(d => d.CreatedAt).ToList();
+            messages.OrderBy(d => d.CreatedAt).Reverse().ToList();
             return messages;
 
         }
@@ -110,12 +105,12 @@ namespace Dmail.Domain.Repositories
                     AllEmails = f.m.MessagesReceivers.Where(x => x.MessageId == f.m.Id).Select(c => c.ReceiverId).ToList(),
                     DateOfEvent = f.m.DateOfEvent
                 }).ToList();
-            foreach (var item in messages)
+            foreach (var item in messages.ToList())
             {
                 if (DbContext.Spam.Find(receiverId, item.SenderId) == null)
                     messages.Remove(item);
             }
-            messages.OrderBy(x => x.CreatedAt).ToList();
+            messages.OrderBy(x => x.CreatedAt).Reverse().ToList();
             return messages;
         }
 
@@ -136,8 +131,8 @@ namespace Dmail.Domain.Repositories
                     AllEmails = f.m.MessagesReceivers.Where(x => x.MessageId == f.m.Id).Select(c => c.ReceiverId).ToList(),
                     DateOfEvent = f.m.DateOfEvent
                 }).ToList();
-            messages.OrderBy(x => x.CreatedAt).ToList();
-            foreach (var item in messages)
+            messages.OrderBy(x => x.CreatedAt).Reverse().ToList();
+            foreach (var item in messages.ToList())
             {
                 if (DbContext.Spam.Find(receiverId, item.SenderId) == null)
                     messages.Remove(item);
