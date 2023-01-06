@@ -26,13 +26,18 @@ namespace Dmail.Presentation.Menus
             Console.WriteLine("Naslov: " + messageToPrint.Title);
             Console.WriteLine("Pošiljatelj: " + messageToPrint.SenderEmail);
         }
-        public static void PrintDetailedMessage(MessagePrint messageToPrint)
+        public static void PrintDetailedMessage(MessagePrint messageToPrint, bool sender)
         {
             Console.Clear();
             Console.WriteLine("Naslov: " + messageToPrint.Title);
             Console.WriteLine("Poruka: " + messageToPrint.Body);
             Console.WriteLine("Poslano na: " + messageToPrint.CreatedAt);
             Console.WriteLine("Pošiljatelj: " + messageToPrint.SenderEmail);
+            if (sender)
+            {
+                var emails = TranslatedEmails(messageToPrint.AllEmails);
+                Console.WriteLine("Primatelji: "+string.Join(", ", emails));
+            }
         }
         public static void PrintDetailedEvent(MessagePrint messageToPrint, bool accepted)
         {

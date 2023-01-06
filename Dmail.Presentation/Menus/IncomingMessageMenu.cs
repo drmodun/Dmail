@@ -187,7 +187,7 @@ namespace Dmail.Presentation.Menus
                 if (message.IsEvent)
                     Prints.PrintDetailedEvent(message, messageReceiversRepo.GetStatus(AccountMenus.UserId, message.Id));
                 else
-                    Prints.PrintDetailedMessage(message);
+                    Prints.PrintDetailedMessage(message, false);
                 while (true)
                 {
                     Console.WriteLine("Akcije");

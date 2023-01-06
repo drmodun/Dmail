@@ -52,7 +52,7 @@ namespace Dmail.Presentation.Menus
                 if (message.IsEvent)
                     Prints.PrintDetailedEvent(message, true);
                 else
-                    Prints.PrintDetailedMessage(message);
+                    Prints.PrintDetailedMessage(message, true);
                 while (true)
                 {
                     Console.WriteLine("Akcije");
