@@ -35,9 +35,6 @@ namespace Dmail.Presentation.Menus
                     Console.ReadLine();
                     continue;
                 }
-                var confirmation = MainMenu.ConfirmationDialog();
-                if (!confirmation)
-                    continue;
                 if (email.Trim().Length == 0 || password.Trim().Length == 0)
                 {
                     Console.WriteLine("Email ili šifra nije upisana u točnom formatu");
@@ -52,7 +49,7 @@ namespace Dmail.Presentation.Menus
                     continue;
                 }
                 var dotPart = monkeyPart[1].Split(".");
-                if (dotPart[0].Length<2 || dotPart.Length != 2)
+                if (dotPart[0].Length<2 || dotPart.Length != 2 || dotPart[1].Length<3)
                 {
                     Console.WriteLine("Krivi format emaila");
                     Console.ReadLine();
@@ -68,6 +65,9 @@ namespace Dmail.Presentation.Menus
                     Console.ReadLine();
                     continue;
                 }
+                var confirmation = MainMenu.ConfirmationDialog();
+                if (!confirmation)
+                    continue;
                 var check = createRepo.CreateNewUser(email, password);
                 if (check == ResponseType.Exists)
                 {
@@ -97,10 +97,12 @@ namespace Dmail.Presentation.Menus
                 Console.WriteLine("Šifra: ");
                 var password = Console.ReadLine();
                 var response = authRepo.Auth(email, password);
+                if (email == "0" || password == "0")
+                    return;
                 if ((DateTime.Now-failedAttempt).TotalSeconds<30)
                 {
                     Console.WriteLine("Pričekajte 30 sekundi od prošlog neuspjelog pokušaja logina");
-                    Console.WriteLine("Preostalo vrijeme: " +(30-(DateTime.Now - failedAttempt).TotalSeconds).ToString());
+                    Console.WriteLine("Preostalo vrijeme: " +(30-(DateTime.Now - failedAttempt).TotalSeconds).ToString()+ "sekundi");
                     Console.ReadLine();
                     continue;
                 }

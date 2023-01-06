@@ -62,14 +62,13 @@ namespace Dmail.Domain.Repositories
                     IsEvent= f.m.IsEvent,
                     AllEmails = f.m.MessagesReceivers.Where(x => x.MessageId == f.m.Id).Select(c => c.ReceiverId).ToList(),
                     DateOfEvent = f.m.DateOfEvent
-                }).ToList();
+                }).OrderByDescending(f => f.CreatedAt).ToList();
             
             foreach (var item in messages.ToList())
             {
                 if (DbContext.Spam.Find(receiverId, item.SenderId) != null)
                     messages.Remove(item);
             }
-            messages.OrderBy(x => x.CreatedAt).Reverse().ToList();
             return messages;
         }
 
@@ -91,8 +90,7 @@ namespace Dmail.Domain.Repositories
                     RecipientEmail = DbContext.Users.Find(receiverId).Email,
                     AllEmails = f.m.MessagesReceivers.Where(x => x.MessageId == f.m.Id).Select(c => c.ReceiverId).ToList(),
                     DateOfEvent=f.m.DateOfEvent
-                }).ToList();
-            messages.OrderBy(x => x.CreatedAt).Reverse().ToList();
+                }).OrderByDescending(f => f.CreatedAt).ToList();
             foreach (var item in messages.ToList())
             {
                 if (DbContext.Spam.Find(receiverId, item.SenderId) != null)
@@ -114,8 +112,7 @@ namespace Dmail.Domain.Repositories
                         AllEmails = f.MessagesReceivers.Where(x => x.MessageId == f.Id).Select(c => c.ReceiverId).ToList(),
                         IsEvent=f.IsEvent,
                         DateOfEvent=f.DateOfEvent
-                    }).ToList();
-            messages.OrderBy(x => x.CreatedAt).Reverse().ToList();
+                    }).OrderByDescending(f => f.CreatedAt).ToList();
             return messages;
         }
         public ICollection<MessagePrint> GetMessagesBySender(int receiverId, string sender)
@@ -136,14 +133,13 @@ namespace Dmail.Domain.Repositories
                     IsEvent = f.m.IsEvent,
                     CreatedAt= f.m.CreatedAt,
                     DateOfEvent=f.m.DateOfEvent
-                }).ToList();
+                }).OrderByDescending(f=>f.CreatedAt).ToList();
             foreach (var item in messages.ToList())
             {
                 if (DbContext.Spam.Find(receiverId, item.SenderId) != null)
                     messages.Remove(item);
             }
-            messages.OrderBy(d=>d.CreatedAt).ToList();
-            return messages;
+            return messages;     
 
         }
         public int NewMessage(int senderId, bool isEvent,  DateTime dateOfEvent, string title, string body)

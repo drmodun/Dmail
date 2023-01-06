@@ -24,18 +24,23 @@ namespace Dmail.Presentation.Menus
                 Console.WriteLine("Izaberite opciju");
                 Console.WriteLine("1 - Nova pošta");
                 Console.WriteLine("0 - Main Menu");
-                int.TryParse(Console.ReadLine(), out _choice);
-                if (_choice < 0 || _choice > 1)
+                var choice = Console.ReadLine();  
+                int.TryParse(choice, out _choice);
+                if (_choice == 0 && choice != "0" )
                 {
                     Console.WriteLine("Nije upisan valjani broj");
                     Console.ReadLine();
+                    continue;
                 }
-                if (_choice == 0)
-                    return;
                 switch (_choice)
                 {
                     case 1:
                         NewMessage(MainMenu.userRepo, new MessageRepo(DmailDbContextFactory.GetDmailContext()), new MessageReceiversRepo(DmailDbContextFactory.GetDmailContext()));
+                        break;
+                    case 2:
+                        return;
+                    default: Console.WriteLine("Krivi input");
+                        Console.ReadLine();
                         break;
                 }
                 //new message system

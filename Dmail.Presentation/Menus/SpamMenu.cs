@@ -18,8 +18,9 @@ namespace Dmail.Presentation.Menus
                 Console.WriteLine("Izaberite opciju");
                 Console.WriteLine("1 - Blokiraj račun");
                 Console.WriteLine("2 - Odblokiraj račun");
-                int.TryParse(Console.ReadLine(), out _choice);
-                if (_choice < 0)
+                var choice = Console.ReadLine();
+                int.TryParse(choice, out _choice);
+                if (_choice == 0 && choice!="0")
                 {
                     Console.WriteLine("Nije upisan valjani input");
                     Console.ReadLine();

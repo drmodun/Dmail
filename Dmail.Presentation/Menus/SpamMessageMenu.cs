@@ -25,14 +25,14 @@ namespace Dmail.Presentation.Menus
                     Console.WriteLine("2 - Nepročitana pošta");
                     Console.WriteLine("3 - Pošta određenoga pošiljatelja");
                     Console.WriteLine("0 - Povratak na glavni menu");
-                    int.TryParse(Console.ReadLine(), out _choice);
-                    if (_choice < 0)
+                    var choice = Console.ReadLine();
+                    int.TryParse(choice, out _choice);
+                    if (_choice == 0 && choice!="0")
                     {
                         Console.WriteLine("Nije upisan valjani input");
                         Console.ReadLine();
+                        continue;
                     }
-                    else if (_choice == 0)
-                        return;
                     switch (_choice)
                     {
                         case 1:
@@ -44,6 +44,8 @@ namespace Dmail.Presentation.Menus
                         case 3:
                             IncomingMessageMenu.GetMessagesbySender(MainMenu.userRepo, new MessageRepo(DmailDbContextFactory.GetDmailContext()), true);
                             break;
+                        case 0:
+                            return;
                         default:
                             Console.WriteLine("Nije upisan točni input");
                             Console.ReadLine();

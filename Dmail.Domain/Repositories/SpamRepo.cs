@@ -50,9 +50,9 @@ namespace Dmail.Domain.Repositories
         }
         public ResponseType TryAdd(int blockerId, int blockedId)
         {
-            if (blockedId < 0 || blockedId > DbContext.Spam.Count() + 1)
+            if (blockedId < 0 || blockedId > DbContext.Users.Count() + 1)
                 return ResponseType.ValidationFailed;
-            if (blockedId<0 || blockedId>DbContext.Spam.Count()+1)
+            if (blockedId<0 || blockedId>DbContext.Users.Count()+1)
                 return ResponseType.ValidationFailed;
             var spam = new Spam()
             {
@@ -67,6 +67,8 @@ namespace Dmail.Domain.Repositories
         }
         public ICollection<MessagePrint> GetMessagesBySender(int receiverId, string  sender)
         {
+            if (DbContext.Spam.Find(receiverId, DbContext.Users.FirstOrDefault(x => x.Email == sender).Id) == null)
+                return new List<MessagePrint>();
             var messages = DbContext.MessagesReceivers.Where(x => x.ReceiverId == receiverId)
                 .Join(DbContext.Messages, x => x.MessageId, m => m.Id, (x, m) => new { x, m })
                 .Where(f => f.m.Sender.Email.Contains(sender) == true)
@@ -83,8 +85,7 @@ namespace Dmail.Domain.Repositories
                     IsEvent = f.m.IsEvent,
                     CreatedAt = f.m.CreatedAt,
                     DateOfEvent= f.m.DateOfEvent,
-                }).ToList();
-            messages.OrderBy(d => d.CreatedAt).Reverse().ToList();
+                }).OrderByDescending(f => f.CreatedAt).ToList();
             return messages;
 
         }
@@ -99,19 +100,19 @@ namespace Dmail.Domain.Repositories
                     Title = f.m.Title,
                     Body = f.m.Body,
                     SenderId = f.m.SenderId,
+                    IsEvent= f.m.IsEvent,
                     SenderEmail = f.m.Sender.Email,
                     RecipientId = receiverId,
                     RecipientEmail = DbContext.Users.Find(receiverId).Email,
                     CreatedAt=f.m.CreatedAt,
                     AllEmails = f.m.MessagesReceivers.Where(x => x.MessageId == f.m.Id).Select(c => c.ReceiverId).ToList(),
                     DateOfEvent = f.m.DateOfEvent
-                }).ToList();
+                }).OrderByDescending(f => f.CreatedAt).ToList();
             foreach (var item in messages.ToList())
             {
                 if (DbContext.Spam.Find(receiverId, item.SenderId) == null)
                     messages.Remove(item);
             }
-            messages.OrderBy(x => x.CreatedAt).Reverse().ToList();
             return messages;
         }
 
@@ -125,14 +126,14 @@ namespace Dmail.Domain.Repositories
                     Id = f.m.Id,
                     Title = f.m.Title,
                     Body = f.m.Body,
+                    IsEvent= f.m.IsEvent,
                     SenderId = f.m.SenderId,
                     SenderEmail = f.m.Sender.Email,
                     RecipientId = receiverId,
                     RecipientEmail = DbContext.Users.Find(receiverId).Email,
                     AllEmails = f.m.MessagesReceivers.Where(x => x.MessageId == f.m.Id).Select(c => c.ReceiverId).ToList(),
                     DateOfEvent = f.m.DateOfEvent
-                }).ToList();
-            messages.OrderBy(x => x.CreatedAt).Reverse().ToList();
+                }).OrderByDescending(f => f.CreatedAt).ToList();
             foreach (var item in messages.ToList())
             {
                 if (DbContext.Spam.Find(receiverId, item.SenderId) == null)

@@ -33,14 +33,14 @@ namespace Dmail.Presentation.Menus
                 Console.WriteLine("2 - Nepročitana pošta");
                 Console.WriteLine("3 - Pošta određenoga pošiljatelja");
                 Console.WriteLine("0 - Povratak na glavni menu");
-                int.TryParse(Console.ReadLine(), out _choice);
-                if (_choice < 0)
+                var choice = Console.ReadLine();
+                int.TryParse(choice, out _choice);
+                if (_choice == 0 && choice!="0")
                 {
                     Console.WriteLine("Nije upisan valjani input");
                     Console.ReadLine();
+                    continue;
                 }
-                else if (_choice == 0)
-                    return;
                 switch (_choice)
                 {
                     case 1:
@@ -52,6 +52,8 @@ namespace Dmail.Presentation.Menus
                     case 3:
                         GetMessagesbySender(MainMenu.userRepo, new MessageRepo(DmailDbContextFactory.GetDmailContext()), false);
                         break;
+                    case 0:
+                        return;
                     default:
                         Console.WriteLine("Nije upisan točni input");
                         Console.ReadLine();
@@ -131,6 +133,7 @@ namespace Dmail.Presentation.Menus
         {
             while (true)
             {
+                Console.Clear();
                 PrintMessages(messages);
                 Console.WriteLine("Upišite što želite s porukama");
                 Console.WriteLine("1 - Detaljni ispis");
@@ -171,7 +174,7 @@ namespace Dmail.Presentation.Menus
                 var select = Console.ReadLine();
                 var selectId = -1;
                 int.TryParse(select, out selectId);
-                if (selectId == 0)
+                if (selectId == 0 && select=="0")
                     return;
                 if (selectId < 0 || selectId>messages.Count())
                 {

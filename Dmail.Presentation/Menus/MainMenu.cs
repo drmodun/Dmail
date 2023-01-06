@@ -23,12 +23,10 @@ namespace Dmail.Presentation.Menus
                 Console.WriteLine("5 - Pošalji novi događaj");
                 Console.WriteLine("6 - Postavke profila");
                 Console.WriteLine("7 - Odjava iz profila");
-                int.TryParse(Console.ReadLine(), out _choice);
-                if (_choice < 0 || _choice > 7)
-                {
-                    Console.WriteLine("Upisan netočan input");
-                    Console.ReadLine();
-                    continue;
+                var choice = Console.ReadLine();
+                int.TryParse(choice, out _choice);
+                if (_choice == 0 && choice != "0") { Console.WriteLine("Upisan netočan input");
+                    Console.ReadLine(); continue;
                 }
                 switch (_choice)
                 {
@@ -45,7 +43,7 @@ namespace Dmail.Presentation.Menus
                         SpamMessageMenu.Content();
                         break;
                     case 4:
-                        NewMessageMenu.Content();
+                        NewMessageMenu.NewMessage(userRepo,IncomingMessageMenu.messageRepo, IncomingMessageMenu.messageReceiversRepo);
                         break;
                     case 5:
                         NewMessageMenu.NewEvent(userRepo, IncomingMessageMenu.messageRepo, IncomingMessageMenu.messageReceiversRepo);
@@ -55,6 +53,10 @@ namespace Dmail.Presentation.Menus
                         break;
                     case 7:
                         return;
+                    default:
+                        Console.WriteLine("Upisan netočan input");
+                        Console.ReadLine();
+                        break;
 
                 }
 
@@ -82,16 +84,17 @@ namespace Dmail.Presentation.Menus
                 Console.WriteLine("1 - Postojeći račun");
                 Console.WriteLine("2 - Novi račun");
                 Console.WriteLine("0 - Izlaz iz aplikacije");
-                int.TryParse(Console.ReadLine(), out _choice);
-                switch (_choice)
+                var choice = Console.ReadLine();
+                switch (choice)
                 {
-                    case 0:
+                    case "0":
+                        Console.WriteLine("?");
                         Environment.Exit(0);
                         break;
-                    case 1:
+                    case "1":
                         AccountMenus.AuthMenu(userRepo);
                         break;
-                    case 2:
+                    case "2":
                         AccountMenus.NewAccount(userRepo);
                         break;
                     default:
@@ -99,8 +102,6 @@ namespace Dmail.Presentation.Menus
                         Console.ReadLine();
                         break;
                 }
-
-
             }
         }
     }
