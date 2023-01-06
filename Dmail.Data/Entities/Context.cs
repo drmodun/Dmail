@@ -49,7 +49,7 @@ namespace Dmail.Data.Entities
                 .WithMany(e => e.MessagesReceivers)
                 .HasForeignKey(ei => ei.ReceiverId);
             modelBuilder.Entity<MessagesReceivers>()
-                .Property(x => x.Accepted);
+                .Property(x => x.Accepted).HasDefaultValue(null);
             modelBuilder.Entity<Spam>()
                 .HasKey(bu => new { bu.BlockerId, bu.Blocked });
             modelBuilder.Entity<Spam>()

@@ -90,7 +90,7 @@ namespace Dmail.Data.Seeds
                     Id = 7,
                     SenderId=6,
                     Title="Resume",
-                    Body="Resume: I have succesfully openned visual studio once",
+                    Body="Resume: I have succesfully opened visual studio once",
                     CreatedAt=new DateTime(2022, 12, 13).ToUniversalTime(),
                     IsEvent=false,
                 },
@@ -122,7 +122,176 @@ namespace Dmail.Data.Seeds
                     CreatedAt=new DateTime(2023, 1, 2).ToUniversalTime(),
                     IsEvent=false,
                 },
-            }) ;
+            });
+            modelBuilder.Entity<MessagesReceivers>().HasData(new List<MessagesReceivers>
+            {
+                new MessagesReceivers()
+                {
+                    MessageId= 1,
+                    ReceiverId=2,
+                    Read=true
+                },
+                new MessagesReceivers()
+                {
+                    MessageId= 2,
+                    ReceiverId=5,
+                    Read=false
+                },
+                new MessagesReceivers()
+                {
+                    MessageId= 3,
+                    ReceiverId=7,
+                    Read=true
+                },
+                new MessagesReceivers()
+                {
+                    MessageId= 3,
+                    ReceiverId=1,
+                    Read=true
+                },
+                new MessagesReceivers()
+                {
+                    MessageId= 3,
+                    ReceiverId=2,
+                    Read=true
+                },
+                new MessagesReceivers()
+                {
+                    MessageId= 4,
+                    ReceiverId=1,
+                    Read=true,
+                    Accepted=true
+                },
+                new MessagesReceivers()
+                {
+                    MessageId= 4,
+                    ReceiverId=2,
+                    Read=true,
+                    Accepted=false
+                },
+                new MessagesReceivers()
+                {
+                    MessageId= 4,
+                    ReceiverId=4,
+                    Read=false, 
+                    Accepted=default(bool)
+                },
+                new MessagesReceivers()
+                {
+                    MessageId= 5,
+                    ReceiverId=5,
+                    Read=true,
+                    Accepted=true
+                },
+                new MessagesReceivers()
+                {
+                    MessageId= 5,
+                    ReceiverId=4,
+                    Read=true,
+                    Accepted=true
+                },
+                new MessagesReceivers()
+                {
+                    MessageId= 5,
+                    ReceiverId=6,
+                    Read=true
+                },
+                new MessagesReceivers()
+                {
+                    MessageId= 6,
+                    ReceiverId=2,
+                    Read=false
+                },
+                new MessagesReceivers()
+                {
+                    MessageId= 6,
+                    ReceiverId=4,
+                    Read=true
+                },
+                new MessagesReceivers()
+                {
+                    MessageId= 7,
+                    ReceiverId=7,
+                    Read=false
+                },
+                new MessagesReceivers()
+                {
+                    MessageId= 7,
+                    ReceiverId=4,
+                    Read=true
+                },
+                new MessagesReceivers()
+                {
+                    MessageId= 8,
+                    ReceiverId=7,
+                    Read=false
+                },
+                new MessagesReceivers()
+                {
+                    MessageId= 9,
+                    ReceiverId=1,
+                    Read=true
+                },
+                new MessagesReceivers()
+                {
+                    MessageId= 10,
+                    ReceiverId=10,
+                    Read=false
+                },
+            });
+            modelBuilder.Entity<Spam>().HasData(new List<Spam>
+            {
+                new Spam()
+                {
+                    BlockerId=2,
+                    Blocked=8
+                },
+                new Spam()
+                {
+                    BlockerId=4,
+                    Blocked=8
+                },
+                new Spam()
+                {
+                    BlockerId=2,
+                    Blocked=7
+                },
+                new Spam()
+                {
+                    BlockerId=1,
+                    Blocked=5
+                },
+                new Spam()
+                {
+                    BlockerId=2,
+                    Blocked=5
+                },
+                new Spam()
+                {
+                    BlockerId=4,
+                    Blocked=5
+                },
+                new Spam()
+                {
+                    BlockerId=2,
+                    Blocked=1
+                },
+                new Spam()
+                {
+                    BlockerId=7,
+                    Blocked=8
+                },
+                new Spam()
+                {
+                    BlockerId=6,
+                    Blocked=2
+                },
+                new Spam()
+                {
+                    BlockerId=5,
+                    Blocked=2
+                },
+            });
         }
     }
 }

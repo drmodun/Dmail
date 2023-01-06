@@ -3,6 +3,7 @@ using System;
 using Dmail.Data.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,10 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Dmail.Data.Migrations
 {
     [DbContext(typeof(DmailContext))]
-    partial class DmailContextModelSnapshot : ModelSnapshot
+    [Migration("20230106114529_Seed4")]
+    partial class Seed4
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -62,7 +64,7 @@ namespace Dmail.Data.Migrations
                             Id = 1,
                             Body = "Pomoc pls",
                             CreatedAt = new DateTime(2020, 8, 31, 22, 0, 0, 0, DateTimeKind.Utc),
-                            DateOfEvent = new DateTime(2023, 1, 6, 12, 26, 38, 253, DateTimeKind.Utc).AddTicks(881),
+                            DateOfEvent = new DateTime(2023, 1, 6, 11, 45, 29, 396, DateTimeKind.Utc).AddTicks(4963),
                             IsEvent = false,
                             SenderId = 1,
                             Title = "Pomoc"
@@ -72,7 +74,7 @@ namespace Dmail.Data.Migrations
                             Id = 2,
                             Body = "E mos mi kupit miljeko zaboravia san",
                             CreatedAt = new DateTime(2022, 8, 31, 22, 0, 0, 0, DateTimeKind.Utc),
-                            DateOfEvent = new DateTime(2023, 1, 6, 12, 26, 38, 253, DateTimeKind.Utc).AddTicks(919),
+                            DateOfEvent = new DateTime(2023, 1, 6, 11, 45, 29, 396, DateTimeKind.Utc).AddTicks(5011),
                             IsEvent = false,
                             SenderId = 3,
                             Title = "Kupovina"
@@ -82,7 +84,7 @@ namespace Dmail.Data.Migrations
                             Id = 3,
                             Body = "Čestitamo osvojili ste besplatni Iphone 14 da prmiite nagradu samo nam dajte vaš matični broj, oib, pin kartice, sve brojeve vezane uz karticu, adresu, legalno ime...",
                             CreatedAt = new DateTime(2021, 3, 23, 23, 0, 0, 0, DateTimeKind.Utc),
-                            DateOfEvent = new DateTime(2023, 1, 6, 12, 26, 38, 253, DateTimeKind.Utc).AddTicks(923),
+                            DateOfEvent = new DateTime(2023, 1, 6, 11, 45, 29, 396, DateTimeKind.Utc).AddTicks(5017),
                             IsEvent = false,
                             SenderId = 8,
                             Title = "Nagrada"
@@ -112,7 +114,7 @@ namespace Dmail.Data.Migrations
                             Id = 6,
                             Body = "Hello I would like to apply to dump internship, I will also send you my resume",
                             CreatedAt = new DateTime(2022, 12, 11, 23, 0, 0, 0, DateTimeKind.Utc),
-                            DateOfEvent = new DateTime(2023, 1, 6, 12, 26, 38, 253, DateTimeKind.Utc).AddTicks(935),
+                            DateOfEvent = new DateTime(2023, 1, 6, 11, 45, 29, 396, DateTimeKind.Utc).AddTicks(5036),
                             IsEvent = false,
                             SenderId = 7,
                             Title = "Job application"
@@ -120,9 +122,9 @@ namespace Dmail.Data.Migrations
                         new
                         {
                             Id = 7,
-                            Body = "Resume: I have succesfully opened visual studio once",
+                            Body = "Resume: I have succesfully openned visual studio once",
                             CreatedAt = new DateTime(2022, 12, 12, 23, 0, 0, 0, DateTimeKind.Utc),
-                            DateOfEvent = new DateTime(2023, 1, 6, 12, 26, 38, 253, DateTimeKind.Utc).AddTicks(937),
+                            DateOfEvent = new DateTime(2023, 1, 6, 11, 45, 29, 396, DateTimeKind.Utc).AddTicks(5040),
                             IsEvent = false,
                             SenderId = 6,
                             Title = "Resume"
@@ -142,7 +144,7 @@ namespace Dmail.Data.Migrations
                             Id = 9,
                             Body = "S obziron na pad kvalitete tvohij domaćih Jane, moram te nažalost obavijestiti da smo došli do odluke da te izbacimo s dump internshipa. Možeš još pratiti predavanja ali nećeš moći sudjelovati u Ic cupu i više ti se neće moći pregledavati domaći.",
                             CreatedAt = new DateTime(2022, 12, 29, 23, 0, 0, 0, DateTimeKind.Utc),
-                            DateOfEvent = new DateTime(2023, 1, 6, 12, 26, 38, 253, DateTimeKind.Utc).AddTicks(944),
+                            DateOfEvent = new DateTime(2023, 1, 6, 11, 45, 29, 396, DateTimeKind.Utc).AddTicks(5051),
                             IsEvent = false,
                             SenderId = 4,
                             Title = "Obavijest o kicku"
@@ -152,7 +154,7 @@ namespace Dmail.Data.Migrations
                             Id = 10,
                             Body = "Wow can you send emails to yourself thats cool",
                             CreatedAt = new DateTime(2023, 1, 1, 23, 0, 0, 0, DateTimeKind.Utc),
-                            DateOfEvent = new DateTime(2023, 1, 6, 12, 26, 38, 253, DateTimeKind.Utc).AddTicks(947),
+                            DateOfEvent = new DateTime(2023, 1, 6, 11, 45, 29, 396, DateTimeKind.Utc).AddTicks(5056),
                             IsEvent = false,
                             SenderId = 10,
                             Title = "Help"
@@ -319,58 +321,6 @@ namespace Dmail.Data.Migrations
                     b.HasKey("BlockerId", "Blocked");
 
                     b.ToTable("Spam");
-
-                    b.HasData(
-                        new
-                        {
-                            BlockerId = 2,
-                            Blocked = 8
-                        },
-                        new
-                        {
-                            BlockerId = 4,
-                            Blocked = 8
-                        },
-                        new
-                        {
-                            BlockerId = 2,
-                            Blocked = 7
-                        },
-                        new
-                        {
-                            BlockerId = 1,
-                            Blocked = 5
-                        },
-                        new
-                        {
-                            BlockerId = 2,
-                            Blocked = 5
-                        },
-                        new
-                        {
-                            BlockerId = 4,
-                            Blocked = 5
-                        },
-                        new
-                        {
-                            BlockerId = 2,
-                            Blocked = 1
-                        },
-                        new
-                        {
-                            BlockerId = 7,
-                            Blocked = 8
-                        },
-                        new
-                        {
-                            BlockerId = 6,
-                            Blocked = 2
-                        },
-                        new
-                        {
-                            BlockerId = 5,
-                            Blocked = 2
-                        });
                 });
 
             modelBuilder.Entity("Dmail.Data.Entities.Models.User", b =>
