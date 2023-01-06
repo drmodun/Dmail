@@ -50,7 +50,7 @@ namespace Dmail.Presentation.Menus
             if (accepted)
                 Console.WriteLine("Prihvaćen");
             else
-                Console.WriteLine("Nije prihvaćen");
+                Console.WriteLine("Nije prihvaćen ili nema odgovora");
         }
         public static void PrintAsSender(MessagePrint messageToPrint)
         {

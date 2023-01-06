@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Dmail.Data.Entities;
 using Dmail.Data.Entities.Models;
 using Dmail.Domain.Enums;
+using Dmail.Data.Enums;
 
 namespace Dmail.Domain.Repositories
 {
@@ -51,14 +52,20 @@ namespace Dmail.Domain.Repositories
 
         public ResponseType UpdateAnswerToEvent(int messageId, int receiverId, bool accepted)
         {
+
+            var acceptedEnum = EventAnswer.None;
+            if (accepted)
+                acceptedEnum = EventAnswer.Accepted;
+            else
+                acceptedEnum = EventAnswer.Rejected;
             var receiver = DbContext.Users.Find(receiverId);
             var message = DbContext.Messages.Find(messageId);
             if (message == null || receiver == null)
                 return ResponseType.NotFound;
             var connectionToUpdate = DbContext.MessagesReceivers.Find(receiverId, messageId);
-            if (connectionToUpdate.Accepted==accepted)
+            if (connectionToUpdate.Answer==acceptedEnum)
                 return ResponseType.NotChanged;
-            connectionToUpdate.Accepted = accepted;
+            connectionToUpdate.Answer = acceptedEnum;
             return SaveChanges();
         }
         public ResponseType NewConnection(int messageId, int receiverId)
@@ -74,7 +81,7 @@ namespace Dmail.Domain.Repositories
         }
         public bool GetStatus(int receiverId, int messageId)
         {
-            return DbContext.MessagesReceivers.Find(receiverId, messageId).Accepted;
+            return DbContext.MessagesReceivers.Find(receiverId, messageId).Answer==EventAnswer.Accepted;
         }
     }
 }

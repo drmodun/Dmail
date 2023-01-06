@@ -14,8 +14,8 @@ namespace Dmail.Domain.Models
         public string Body { get; set; }
         public int SenderId { get; set; }
         public string SenderEmail { get; set;}
+
         public int RecipientId;
-        public string RecipientEmail { get; set; }
         public DateTime CreatedAt { get; set; }
         public bool IsEvent { get; set; }
         public DateTime DateOfEvent;

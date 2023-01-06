@@ -8,6 +8,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Dmail.Data.Enums;
+using Npgsql;
 
 namespace Dmail.Data.Entities
 {
@@ -15,6 +17,7 @@ namespace Dmail.Data.Entities
     {
         public DmailContext(DbContextOptions options) : base(options)
         {
+            NpgsqlConnection.GlobalTypeMapper.MapEnum<EventAnswer>();
         }
 
         public DbSet<User> Users => Set<User>();
@@ -23,6 +26,7 @@ namespace Dmail.Data.Entities
         public DbSet<Spam> Spam => Set<Spam>();
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.HasPostgresEnum<EventAnswer>();
             modelBuilder.Entity<User>()
                 .HasKey(x => x.Id);
             modelBuilder.Entity<User>()
@@ -49,7 +53,7 @@ namespace Dmail.Data.Entities
                 .WithMany(e => e.MessagesReceivers)
                 .HasForeignKey(ei => ei.ReceiverId);
             modelBuilder.Entity<MessagesReceivers>()
-                .Property(x => x.Accepted).HasDefaultValue(null);
+                .Property(x => x.Answer).HasDefaultValue(EventAnswer.None);
             modelBuilder.Entity<Spam>()
                 .HasKey(bu => new { bu.BlockerId, bu.Blocked });
             modelBuilder.Entity<Spam>()

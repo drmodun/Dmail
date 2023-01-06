@@ -58,7 +58,6 @@ namespace Dmail.Domain.Repositories
                     SenderEmail = f.m.Sender.Email,
                     RecipientId = receiverId,
                     CreatedAt= f.m.CreatedAt,
-                    RecipientEmail = DbContext.Users.Find(receiverId).Email,
                     IsEvent= f.m.IsEvent,
                     AllEmails = f.m.MessagesReceivers.Where(x => x.MessageId == f.m.Id).Select(c => c.ReceiverId).ToList(),
                     DateOfEvent = f.m.DateOfEvent
@@ -87,7 +86,6 @@ namespace Dmail.Domain.Repositories
                     RecipientId = receiverId,
                     IsEvent=f.m.IsEvent,
                     CreatedAt= f.m.CreatedAt,
-                    RecipientEmail = DbContext.Users.Find(receiverId).Email,
                     AllEmails = f.m.MessagesReceivers.Where(x => x.MessageId == f.m.Id).Select(c => c.ReceiverId).ToList(),
                     DateOfEvent=f.m.DateOfEvent
                 }).OrderByDescending(f => f.CreatedAt).ToList();
@@ -129,7 +127,6 @@ namespace Dmail.Domain.Repositories
                     SenderEmail = f.m.Sender.Email,
                     AllEmails = f.m.MessagesReceivers.Where(n => n.MessageId == f.m.Id).Select(c => c.ReceiverId).ToList(),
                     RecipientId = receiverId,
-                    RecipientEmail = DbContext.Users.Find(receiverId).Email,
                     IsEvent = f.m.IsEvent,
                     CreatedAt= f.m.CreatedAt,
                     DateOfEvent=f.m.DateOfEvent

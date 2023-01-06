@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Dmail.Data.Enums;
 
 namespace Dmail.Data.Seeds
 {
@@ -160,35 +161,35 @@ namespace Dmail.Data.Seeds
                     MessageId= 4,
                     ReceiverId=1,
                     Read=true,
-                    Accepted=true
+                    Answer=EventAnswer.Accepted
                 },
                 new MessagesReceivers()
                 {
                     MessageId= 4,
                     ReceiverId=2,
                     Read=true,
-                    Accepted=false
+                    Answer=EventAnswer.Rejected
                 },
                 new MessagesReceivers()
                 {
                     MessageId= 4,
                     ReceiverId=4,
                     Read=false, 
-                    Accepted=default(bool)
+                    Answer=EventAnswer.None
                 },
                 new MessagesReceivers()
                 {
                     MessageId= 5,
                     ReceiverId=5,
                     Read=true,
-                    Accepted=true
+                    Answer=EventAnswer.Accepted
                 },
                 new MessagesReceivers()
                 {
                     MessageId= 5,
                     ReceiverId=4,
                     Read=true,
-                    Accepted=true
+                    Answer=EventAnswer.Accepted
                 },
                 new MessagesReceivers()
                 {

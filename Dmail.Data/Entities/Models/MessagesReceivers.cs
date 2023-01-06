@@ -1,4 +1,5 @@
-﻿namespace Dmail.Data.Entities.Models
+﻿using Dmail.Data.Enums;
+namespace Dmail.Data.Entities.Models
 {
     public class MessagesReceivers
     {
@@ -6,7 +7,7 @@
         public int ReceiverId;
         public Message? Message;
         public User? Receiver;
-        public bool Accepted;
-        public bool Read=false;
+        public EventAnswer Answer;
+        public bool Read = false;
     }
 }

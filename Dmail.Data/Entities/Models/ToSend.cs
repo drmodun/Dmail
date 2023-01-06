@@ -16,7 +16,7 @@ namespace Dmail.Data.Entities.Models
         public string Body { get; set; }
         public DateTime CreatedAt { get; set; }
         public bool IsEvent = false;
-        public DateTime DateOfEvent = DateTime.UtcNow;
+        public DateTime DateOfEvent = DateTime.MinValue;
 
     }
 }
