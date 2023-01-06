@@ -44,6 +44,30 @@ namespace Dmail.Presentation.Menus
                     Console.ReadLine();
                     continue;
                 }
+                var monkeyPart = email.Split('@');
+                if (monkeyPart[0].Length<1 || monkeyPart.Length!=2)
+                {
+                    Console.WriteLine("Krivi format emaila");
+                    Console.ReadLine();
+                    continue;
+                }
+                var dotPart = monkeyPart[1].Split(".");
+                if (dotPart[0].Length<2 || dotPart.Length != 2)
+                {
+                    Console.WriteLine("Krivi format emaila");
+                    Console.ReadLine();
+                    continue;
+                }
+                var random = Prints.RandomString(10);
+                Console.WriteLine(random);
+                Console.WriteLine("Upišite broj od gore");
+                var captcha = Console.ReadLine();
+                if (captcha != random)
+                {
+                    Console.WriteLine("Nije točno upisana captcha");
+                    Console.ReadLine();
+                    continue;
+                }
                 var check = createRepo.CreateNewUser(email, password);
                 if (check == ResponseType.Exists)
                 {
@@ -62,6 +86,7 @@ namespace Dmail.Presentation.Menus
         public static void AuthMenu(UserRepo userRepo)
         {
             var authRepo = userRepo;
+            DateTime failedAttempt = DateTime.MinValue;
             while (true)
             {
                 Console.Clear();
@@ -72,16 +97,26 @@ namespace Dmail.Presentation.Menus
                 Console.WriteLine("Šifra: ");
                 var password = Console.ReadLine();
                 var response = authRepo.Auth(email, password);
+                if ((DateTime.Now-failedAttempt).TotalSeconds<30)
+                {
+                    Console.WriteLine("Pričekajte 30 sekundi od prošlog neuspjelog pokušaja logina");
+                    Console.WriteLine("Preostalo vrijeme: " +(30-(DateTime.Now - failedAttempt).TotalSeconds).ToString());
+                    Console.ReadLine();
+                    continue;
+                }
                 if (response == ResponseType.NotFound)
                 {
                     Console.WriteLine("Nije pronađen račun povezan na taj email");
+                    failedAttempt = DateTime.Now;
                     Console.ReadLine();
                     continue;
                 }
                 else if (response == ResponseType.ValidationFailed)
                 {
                     Console.WriteLine("Nije upisana točna šifra");
+                    failedAttempt = DateTime.Now;
                     Console.ReadLine();
+
                     continue;
                 }
                 //Add known account when I add account actions
