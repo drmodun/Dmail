@@ -89,7 +89,7 @@ namespace Dmail.Data.Seeds
                 new Message()
                 {
                     Id = 7,
-                    SenderId=6,
+                    SenderId=8,
                     Title="Resume",
                     Body="Resume: I have succesfully opened visual studio once",
                     CreatedAt=new DateTime(2022, 12, 13).ToUniversalTime(),

@@ -67,11 +67,9 @@ namespace Dmail.Domain.Repositories
         }
         public ICollection<MessagePrint> GetMessagesBySender(int receiverId, string  sender)
         {
-            if (DbContext.Spam.Find(receiverId, DbContext.Users.FirstOrDefault(x => x.Email == sender).Id) == null)
-                return new List<MessagePrint>();
             var messages = DbContext.MessagesReceivers.Where(x => x.ReceiverId == receiverId)
                 .Join(DbContext.Messages, x => x.MessageId, m => m.Id, (x, m) => new { x, m })
-                .Where(f => f.m.Sender.Email.Contains(sender) == true)
+                .Where(f => f.m.Sender.Email.Contains(sender) == true && f.m.SenderId!=receiverId)
                 .Select(f => new MessagePrint()
                 {
                     Id = f.m.Id,
@@ -85,7 +83,8 @@ namespace Dmail.Domain.Repositories
                     CreatedAt = f.m.CreatedAt,
                     DateOfEvent= f.m.DateOfEvent,
                 }).OrderByDescending(f => f.CreatedAt).ToList();
-            return messages;
+            var filter = messages.Where(f => DbContext.Spam.FirstOrDefault(x => x.BlockerId == receiverId && x.Blocked == f.SenderId) != default).ToList();
+            return filter;
 
         }
         public ICollection<MessagePrint> GetSeenMessages(int receiverId)
@@ -127,6 +126,7 @@ namespace Dmail.Domain.Repositories
                     IsEvent= f.m.IsEvent,
                     SenderId = f.m.SenderId,
                     SenderEmail = f.m.Sender.Email,
+                    CreatedAt= f.m.CreatedAt,
                     RecipientId = receiverId,
                     AllEmails = f.m.MessagesReceivers.Where(x => x.MessageId == f.m.Id).Select(c => c.ReceiverId).ToList(),
                     DateOfEvent = f.m.DateOfEvent

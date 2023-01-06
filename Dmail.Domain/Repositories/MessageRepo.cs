@@ -117,7 +117,7 @@ namespace Dmail.Domain.Repositories
         {
             var messages = DbContext.MessagesReceivers.Where(x => x.ReceiverId == receiverId)
                 .Join(DbContext.Messages, x => x.MessageId, m => m.Id, (x, m) => new { x, m })
-                .Where(f=>f.m.Sender.Email.Contains(sender)==true)
+                .Where(f=>f.m.Sender.Email.Contains(sender)==true && f.m.SenderId!=receiverId)
                 .Select(f => new MessagePrint()
                 {
                     Id = f.m.Id,
@@ -169,6 +169,9 @@ namespace Dmail.Domain.Repositories
                     Email = f.y.Sender.Email,
                     Blocked = DbContext.Spam.FirstOrDefault(x=>x.BlockerId==receiverId && x.Blocked==f.y.SenderId) != default
                 }).Distinct().ToList();
+            var removeSelf = users.FirstOrDefault(x => x.Id == receiverId);
+            if (removeSelf != null)
+                users.Remove(removeSelf);
             return users;
         }
 
@@ -182,6 +185,9 @@ namespace Dmail.Domain.Repositories
                     Email = f.y.Receiver.Email,
                     Blocked = DbContext.Spam.FirstOrDefault(x => x.BlockerId == senderId && x.Blocked == f.y.ReceiverId) != default
                 }).Distinct().ToList();
+            var removeSelf = users.FirstOrDefault(x => x.Id == senderId);
+            if (removeSelf!= null)
+                users.Remove(removeSelf);
             return users;
         }
 

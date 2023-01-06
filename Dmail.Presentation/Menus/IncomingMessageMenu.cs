@@ -176,6 +176,12 @@ namespace Dmail.Presentation.Menus
                 int.TryParse(select, out selectId);
                 if (selectId == 0 && select=="0")
                     return;
+                if (selectId == 0 && select != "0")
+                {
+                    Console.WriteLine("Upisan krivi unos");
+                    Console.ReadLine();
+                    continue;
+                }
                 if (selectId < 0 || selectId>messages.Count())
                 {
                     Console.WriteLine("Nije upisan validan broj poruke");

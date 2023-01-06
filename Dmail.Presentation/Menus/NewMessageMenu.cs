@@ -75,10 +75,10 @@ namespace Dmail.Presentation.Menus
                         continue;
                     }
                     emailIds.Add(id);
+                }
                     var check = NewMessageContent(emailIds, userRepo, messageRepo, messageReceiversRepo);
                     if (check)
                         return;
-                }
             }
         }
         public static bool NewMessageContent(List<int> emailIds, UserRepo userRepo, MessageRepo messageRepo, MessageReceiversRepo messageReceiversRepo)
