@@ -23,35 +23,38 @@ namespace Dmail.Presentation.Menus
                 Console.WriteLine("Upišite mail i šifru novog računa (upišite 0 za izlaz na prijašnji menu)");
                 Console.WriteLine("Email");
                 var email = Console.ReadLine();
-                Console.WriteLine("Šifra");
-                var password = Console.ReadLine();
-                Console.WriteLine("Ponovljena šifra");
-                var passCheck = Console.ReadLine();
                 if (email == "0")
                     return;
-                if (password != passCheck)
-                {
-                    Console.WriteLine("Šifre se ne podudaraju");
-                    Console.ReadLine();
-                    continue;
-                }
-                if (email.Trim().Length == 0 || password.Trim().Length == 0)
-                {
-                    Console.WriteLine("Email ili šifra nije upisana u točnom formatu");
-                    Console.ReadLine();
-                    continue;
-                }
                 var monkeyPart = email.Split('@');
-                if (monkeyPart[0].Length<1 || monkeyPart.Length!=2)
+                if (monkeyPart[0].Length < 1 || monkeyPart.Length != 2)
                 {
                     Console.WriteLine("Krivi format emaila");
                     Console.ReadLine();
                     continue;
                 }
                 var dotPart = monkeyPart[1].Split(".");
-                if (dotPart[0].Length<2 || dotPart.Length != 2 || dotPart[1].Length<3)
+                if (dotPart[0].Length < 2 || dotPart.Length != 2 || dotPart[1].Length < 3)
                 {
                     Console.WriteLine("Krivi format emaila");
+                    Console.ReadLine();
+                    continue;
+                }
+                Console.WriteLine("Šifra");
+                var password = Console.ReadLine();
+                if (password == "0")
+                    return;
+                if (email.Trim().Length == 0 || password.Trim().Length == 0)
+                {
+                    Console.WriteLine("Email ili šifra nije upisana u točnom formatu");
+                    Console.ReadLine();
+                    continue;
+                }
+                Console.WriteLine("Ponovljena šifra");
+                var passCheck = Console.ReadLine();
+                
+                if (password != passCheck)
+                {
+                    Console.WriteLine("Šifre se ne podudaraju");
                     Console.ReadLine();
                     continue;
                 }

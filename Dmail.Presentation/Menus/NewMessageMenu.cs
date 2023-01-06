@@ -159,9 +159,9 @@ namespace Dmail.Presentation.Menus
                     Console.ReadLine();
                     continue;
                 }
-                if (emailIds.Contains(id))
+                if (emailIds.Contains(id) || emailIds.Contains(AccountMenus.UserId))
                 {
-                    Console.WriteLine("Ne možete istoj osobi dva puta poslati isti mail");
+                    Console.WriteLine("Ne možete istoj osobi dva puta poslati isti događaj ili samome sebi poslati isti događaj");
                     Console.ReadLine();
                     continue;
                 }
