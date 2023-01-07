@@ -2,6 +2,7 @@
 using Dmail.Domain.Repositories;
 using Dmail.Domain.Factories;
 using Microsoft.EntityFrameworkCore.Query.SqlExpressions;
+using System.Diagnostics.Contracts;
 
 namespace Dmail.Presentation.Menus
 {
@@ -74,6 +75,7 @@ namespace Dmail.Presentation.Menus
         }
         public static void Accounts()
         {
+            var failedAttempt = DateTime.MinValue;
             while (true)
             {
                 _choice = -1;
@@ -91,7 +93,7 @@ namespace Dmail.Presentation.Menus
                         Environment.Exit(0);
                         break;
                     case "1":
-                        AccountMenus.AuthMenu(Info.Repos.UserRepo);
+                        failedAttempt = AccountMenus.AuthMenu(Info.Repos.UserRepo, failedAttempt);
                         break;
                     case "2":
                         AccountMenus.NewAccount(Info.Repos.UserRepo);

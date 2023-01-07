@@ -30,14 +30,14 @@ namespace Dmail.Presentation.Menus
                 {
                     Console.WriteLine("Krivi format emaila");
                     Console.ReadLine();
-                    continue;
+                    return;
                 }
                 var dotPart = monkeyPart[1].Split(".");
                 if (dotPart[0].Length < 2 || dotPart.Length != 2 || dotPart[1].Length < 3)
                 {
                     Console.WriteLine("Krivi format emaila");
                     Console.ReadLine();
-                    continue;
+                    return;
                 }
                 Console.WriteLine("Šifra");
                 var password = Console.ReadLine();
@@ -47,7 +47,7 @@ namespace Dmail.Presentation.Menus
                 {
                     Console.WriteLine("Email ili šifra nije upisana u točnom formatu");
                     Console.ReadLine();
-                    continue;
+                    return;
                 }
                 Console.WriteLine("Ponovljena šifra");
                 var passCheck = Console.ReadLine();
@@ -56,7 +56,7 @@ namespace Dmail.Presentation.Menus
                 {
                     Console.WriteLine("Šifre se ne podudaraju");
                     Console.ReadLine();
-                    continue;
+                    return;
                 }
                 var random = Prints.RandomString(10);
                 Console.WriteLine(random);
@@ -66,23 +66,22 @@ namespace Dmail.Presentation.Menus
                 {
                     Console.WriteLine("Nije točno upisana captcha");
                     Console.ReadLine();
-                    continue;
+                    return;
                 }
                 var confirmation = MainMenu.ConfirmationDialog();
                 if (!confirmation)
-                    continue;
+                    return;
                 var action = new AccounActions();
                 var check = action.CreateAccount(createRepo, email, password);
                 if (!check)
-                    continue;
+                    return;
                 MainMenu.Content();
                 return;
             }
         }
-        public static void AuthMenu(UserRepo userRepo)
+        public static DateTime AuthMenu(UserRepo userRepo, DateTime failedAttempt)
         {
             var authRepo = userRepo;
-            DateTime failedAttempt = DateTime.MinValue;
             while (true)
             {
                 Console.Clear();
@@ -93,11 +92,11 @@ namespace Dmail.Presentation.Menus
                 Console.WriteLine("Šifra: ");
                 var password = Console.ReadLine();
                 if (email == "0" || password == "0")
-                    return;
+                    return DateTime.Now;
                 if ((DateTime.Now-failedAttempt).TotalSeconds<30)
                 {
                     Console.WriteLine("Pričekajte 30 sekundi od prošlog neuspjelog pokušaja logina");
-                    Console.WriteLine("Preostalo vrijeme: " +(30-(DateTime.Now - failedAttempt).TotalSeconds).ToString()+ "sekundi");
+                    Console.WriteLine("Preostalo vrijeme: " +(30-(DateTime.Now - failedAttempt).TotalSeconds).ToString()+ " sekundi");
                     Console.ReadLine();
                     continue;
                 }
@@ -106,9 +105,10 @@ namespace Dmail.Presentation.Menus
                 if (check != DateTime.MinValue)
                 {
                     failedAttempt = check;
-                    return;
+                    return failedAttempt;
                 }
                 MainMenu.Content();
+                return failedAttempt;
                 break;
 
             }
