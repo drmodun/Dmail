@@ -26,7 +26,7 @@ namespace Dmail.Presentation.Menus
         {
             Console.WriteLine("Poslane poruke");
             Console.WriteLine("Upišite broj poruke koje želite urediti");
-            var messages = messageRepo.GetSentMessages(AccountMenus.UserId);
+            var messages = messageRepo.GetSentMessages(Info.UserId);
             Console.Clear();
             MessagesMenu(messages);
         }
@@ -48,7 +48,7 @@ namespace Dmail.Presentation.Menus
                     continue;
                 }
                 var message = messages.ElementAt(selectId - 1);
-                Console.WriteLine(AccountMenus.UserId.ToString()+" "+message.Id.ToString());
+                Console.WriteLine(Info.UserId.ToString()+" "+message.Id.ToString());
                 if (message.IsEvent)
                     Prints.PrintDetailedEvent(message, true);
                 else
@@ -105,21 +105,21 @@ namespace Dmail.Presentation.Menus
                 switch (choice)
                 {
                     case "1":
-                        ChooseMessage(MainMenu.userRepo, IncomingMessageMenu.messageRepo, IncomingMessageMenu.messageReceiversRepo, messages);
+                        ChooseMessage(Info.Repos.UserRepo, Info.Repos.MessageRepo, Info.Repos.MessageReceiversRepo, messages);
                         break;
                     case "2":
                         var messagesCopy = messages.Where(x => x.IsEvent == false).ToList();
                         Console.Clear();
                         Console.WriteLine("Ispis svih mailova");
                         PrintMessages(messagesCopy);
-                        ChooseMessage(MainMenu.userRepo, IncomingMessageMenu.messageRepo, IncomingMessageMenu.messageReceiversRepo, messagesCopy);
+                        ChooseMessage(Info.Repos.UserRepo, Info.Repos.MessageRepo, Info.Repos.MessageReceiversRepo, messagesCopy);
                         break;
                     case "3":
                         var eventsCopy = messages.Where(x => x.IsEvent == true).ToList();
                         Console.Clear();
                         Console.WriteLine("Ispis svih događaja");
                         PrintMessages(eventsCopy);
-                        ChooseMessage(MainMenu.userRepo, IncomingMessageMenu.messageRepo, IncomingMessageMenu.messageReceiversRepo, eventsCopy);
+                        ChooseMessage(Info.Repos.UserRepo, Info.Repos.MessageRepo, Info.Repos.MessageReceiversRepo, eventsCopy);
                         break;
                     default:
                         return;

@@ -16,7 +16,7 @@ namespace Dmail.Presentation.Menus
             var list = new List<String>();
             foreach (var email in AllEmails)
             {
-                list.Add(MainMenu.userRepo.GetUser(email).Email);
+                list.Add(Info.Repos.UserRepo.GetUser(email).Email);
             }
             return list;
 

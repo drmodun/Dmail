@@ -36,13 +36,13 @@ namespace Dmail.Presentation.Menus
                     switch (_choice)
                     {
                         case 1:
-                            IncomingMessageMenu.GetSeenMessages(MainMenu.userRepo, new MessageRepo(DmailDbContextFactory.GetDmailContext()), true);
+                            IncomingMessageMenu.GetSeenMessages(Info.Repos.UserRepo, Info.Repos.MessageRepo, true);
                             break;
                         case 2:
-                           IncomingMessageMenu.GetNonSeenMessages(MainMenu.userRepo, new MessageRepo(DmailDbContextFactory.GetDmailContext()), new MessageReceiversRepo(DmailDbContextFactory.GetDmailContext()), true);
+                           IncomingMessageMenu.GetNonSeenMessages(Info.Repos.UserRepo, Info.Repos.MessageRepo, Info.Repos.MessageReceiversRepo, true);
                             break;
                         case 3:
-                            IncomingMessageMenu.GetMessagesbySender(MainMenu.userRepo, new MessageRepo(DmailDbContextFactory.GetDmailContext()), true);
+                            IncomingMessageMenu.GetMessagesbySender(Info.Repos.UserRepo, Info.Repos.MessageRepo, true);
                             break;
                         case 0:
                             return;

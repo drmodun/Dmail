@@ -7,7 +7,6 @@ namespace Dmail.Presentation.Menus
     public static class SpamMenu
     {
         public static int _choice;
-        public static SpamRepo? spamRepo;
         public static void Content(UserPrint user)
         {
             while (true)
@@ -30,10 +29,10 @@ namespace Dmail.Presentation.Menus
                     case 0:
                         return;
                     case 2:
-                        RemoveSpamConnection(MainMenu.userRepo, spamRepo, user); 
+                        RemoveSpamConnection(Info.Repos.UserRepo, Info.Repos.SpamRepo, user); 
                         break;
                     case 1:
-                        AddSpamConnection(MainMenu.userRepo, spamRepo, user);
+                        AddSpamConnection(Info.Repos.UserRepo, Info.Repos.SpamRepo, user);
                         break;
                     default:
                         Console.WriteLine("Nije upisan točan input");
@@ -55,7 +54,7 @@ namespace Dmail.Presentation.Menus
                 var confirmation = MainMenu.ConfirmationDialog();
                 if (!confirmation)
                     return;
-                var check = spamRepo.TryAdd(AccountMenus.UserId, blocked.Id);
+                var check = spamRepo.TryAdd(Info.UserId, blocked.Id);
                 if (check == ResponseType.ValidationFailed)
                 {
                     Console.WriteLine("Nije upisan pravilan email");
@@ -84,7 +83,7 @@ namespace Dmail.Presentation.Menus
                 var confirmation = MainMenu.ConfirmationDialog();
                 if (!confirmation)
                     return;
-                var check = spamRepo.Delete(AccountMenus.UserId, unblocked.Id);
+                var check = spamRepo.Delete(Info.UserId, unblocked.Id);
                 if (check == ResponseType.NotFound)
                 {
                     Console.WriteLine("Spam lista ne sadrži tog korisnika");

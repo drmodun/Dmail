@@ -35,7 +35,7 @@ namespace Dmail.Presentation.Menus
                 switch (_choice)
                 {
                     case 1:
-                        NewMessage(MainMenu.userRepo, new MessageRepo(DmailDbContextFactory.GetDmailContext()), new MessageReceiversRepo(DmailDbContextFactory.GetDmailContext()));
+                        NewMessage(Info.Repos.UserRepo, Info.Repos.MessageRepo, Info.Repos.MessageReceiversRepo);
                         break;
                     case 2:
                         return;
@@ -103,7 +103,7 @@ namespace Dmail.Presentation.Menus
             {
                 return false;
             }
-            check1 = messageRepo.NewMessage(AccountMenus.UserId, false, DateTime.MinValue, title, body);
+            check1 = messageRepo.NewMessage(Info.UserId, false, DateTime.MinValue, title, body);
             if (check1 == -1)
             {
                 Console.WriteLine("Došlo je do problema pri pravljenju poruke");
@@ -159,7 +159,7 @@ namespace Dmail.Presentation.Menus
                     Console.ReadLine();
                     continue;
                 }
-                if (emailIds.Contains(id) || emailIds.Contains(AccountMenus.UserId))
+                if (emailIds.Contains(id) || emailIds.Contains(Info.UserId))
                 {
                     Console.WriteLine("Ne možete istoj osobi dva puta poslati isti događaj ili samome sebi poslati isti događaj");
                     Console.ReadLine();
@@ -197,7 +197,7 @@ namespace Dmail.Presentation.Menus
             {
                 return;
             }
-            check1 = messageRepo.NewMessage(AccountMenus.UserId, true, dateConverted, title, "");
+            check1 = messageRepo.NewMessage(Info.UserId, true, dateConverted, title, "");
             if (check1 == -1)
             {
                 Console.WriteLine("Došlo je do problema pri pravljenju poruke");

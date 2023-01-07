@@ -11,8 +11,6 @@ namespace Dmail.Presentation.Menus
 {
     public static class AccountMenus
     {
-        public static int UserId = 0;
-        public static int OtherUserId = 0;
         public static void NewAccount(UserRepo userRepo)
         {
             var createRepo = userRepo;
@@ -81,7 +79,8 @@ namespace Dmail.Presentation.Menus
                 Console.WriteLine($"Uspješno napravljen račun email: {email}");
                 Console.WriteLine("Pretisnite bilo koji butun za nastavak");
                 Console.ReadLine();
-                UserId=createRepo.GetIdByEmail(email);
+                Info.UserId=createRepo.GetIdByEmail(email);
+                Info.UserEmail=email;
                 MainMenu.Content();
                 return;
             }
@@ -127,7 +126,8 @@ namespace Dmail.Presentation.Menus
                 //Add known account when I add account actions
                 Console.WriteLine("Uspješno logirani u račun");
                 Console.ReadLine();
-                UserId= authRepo.GetIdByEmail(email);
+                Info.UserId= authRepo.GetIdByEmail(email);
+                Info.UserEmail = authRepo.GetUser(Info.UserId).Email;
                 MainMenu.Content();
                 break;
 

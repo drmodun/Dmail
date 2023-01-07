@@ -19,8 +19,6 @@ namespace Dmail.Presentation.Menus
     public class IncomingMessageMenu
     {
         private static int _choice;
-        public static MessageRepo messageRepo;
-        public static MessageReceiversRepo messageReceiversRepo;
 
         public static void Content()
         {
@@ -44,13 +42,13 @@ namespace Dmail.Presentation.Menus
                 switch (_choice)
                 {
                     case 1:
-                        GetSeenMessages(MainMenu.userRepo, new MessageRepo(DmailDbContextFactory.GetDmailContext()), false);
+                        GetSeenMessages(Info.Repos.UserRepo, Info.Repos.MessageRepo, false);
                         break;
                     case 2:
-                        GetNonSeenMessages(MainMenu.userRepo, new MessageRepo(DmailDbContextFactory.GetDmailContext()), new MessageReceiversRepo(DmailDbContextFactory.GetDmailContext()), false);
+                        GetNonSeenMessages(Info.Repos.UserRepo, Info.Repos.MessageRepo, Info.Repos.MessageReceiversRepo, false);
                         break;
                     case 3:
-                        GetMessagesbySender(MainMenu.userRepo, new MessageRepo(DmailDbContextFactory.GetDmailContext()), false);
+                        GetMessagesbySender(Info.Repos.UserRepo, Info.Repos.MessageRepo, false);
                         break;
                     case 0:
                         return;
@@ -78,11 +76,11 @@ namespace Dmail.Presentation.Menus
             ICollection<MessagePrint> messages = null;
             if (!spam)
             {
-                messages = messageRepo.GetSeenMessages(AccountMenus.UserId);
+                messages = messageRepo.GetSeenMessages(Info.UserId);
             }
             else
             {
-                messages = SpamMenu.spamRepo.GetSeenMessages(AccountMenus.UserId);
+                messages = Info.Repos.SpamRepo.GetSeenMessages(Info.UserId);
             }
             Console.Clear();
             if (messages.Count == 0)
@@ -101,11 +99,11 @@ namespace Dmail.Presentation.Menus
             ICollection<MessagePrint> messages = null;
             if (!spam)
             {
-                messages = messageRepo.GetNonSeenMessages(AccountMenus.UserId);
+                messages = messageRepo.GetNonSeenMessages(Info.UserId);
             }
             else
             {
-                messages = SpamMenu.spamRepo.GetNonSeenMessages(AccountMenus.UserId);
+                messages = Info.Repos.SpamRepo.GetNonSeenMessages(Info.UserId);
             };
             Console.Clear();
             if (messages.Count == 0)
@@ -125,11 +123,11 @@ namespace Dmail.Presentation.Menus
             ICollection<MessagePrint> messages;
             if (!spam)
             {
-                messages = messageRepo.GetMessagesBySender(AccountMenus.UserId, sender);
+                messages = messageRepo.GetMessagesBySender(Info.UserId, sender);
             }
             else
             {
-                messages = SpamMenu.spamRepo.GetMessagesBySender(AccountMenus.UserId, sender);
+                messages = Info.Repos.SpamRepo.GetMessagesBySender(Info.UserId, sender);
             }
             if (messages.Count() == 0)
             {
@@ -156,21 +154,21 @@ namespace Dmail.Presentation.Menus
                 switch (choice)
                 {
                     case "1":
-                        ChooseMessage(MainMenu.userRepo, messageRepo, messageReceiversRepo, messages);
+                        ChooseMessage(Info.Repos.UserRepo, Info.Repos.MessageRepo, Info.Repos.MessageReceiversRepo, messages);
                         break;
                     case "2":
                         var messagesCopy = messages.Where(x => x.IsEvent == false).ToList();
                         Console.Clear();
                         Console.WriteLine("Ispis svih mailova");
                         PrintMessages(messagesCopy);
-                        ChooseMessage(MainMenu.userRepo, messageRepo, messageReceiversRepo, messagesCopy);
+                        ChooseMessage(Info.Repos.UserRepo, Info.Repos.MessageRepo, Info.Repos.MessageReceiversRepo, messagesCopy);
                         break;
                     case "3":
                         var eventsCopy = messages.Where(x => x.IsEvent == true).ToList();
                         Console.Clear();
                         Console.WriteLine("Ispis svih događaja");
                         PrintMessages(eventsCopy);
-                        ChooseMessage(MainMenu.userRepo, messageRepo, messageReceiversRepo, eventsCopy);
+                        ChooseMessage(Info.Repos.UserRepo, Info.Repos.MessageRepo, Info.Repos.MessageReceiversRepo, eventsCopy);
                         break;
                     default:
                         return;
@@ -201,9 +199,9 @@ namespace Dmail.Presentation.Menus
                     continue;
                 }
                 var message = messages.ElementAt(selectId-1);
-                messageReceiversRepo.Update(message.Id, AccountMenus.UserId, true);
+                messageReceiversRepo.Update(message.Id, Info.UserId, true);
                 if (message.IsEvent)
-                    Prints.PrintDetailedEvent(message, messageReceiversRepo.GetStatus(AccountMenus.UserId, message.Id));
+                    Prints.PrintDetailedEvent(message, messageReceiversRepo.GetStatus(Info.UserId, message.Id));
                 else
                     Prints.PrintDetailedMessage(message, false);
                 while (true)
@@ -227,7 +225,7 @@ namespace Dmail.Presentation.Menus
                             var confirmation = MainMenu.ConfirmationDialog();
                             if (!confirmation)
                                 break;
-                            messageReceiversRepo.Update(message.Id, AccountMenus.UserId, false);
+                            messageReceiversRepo.Update(message.Id, Info.UserId, false);
                             Console.WriteLine("Uspješno poruka označena kao nepročitana");
                             Console.ReadLine();
                             break;
@@ -235,7 +233,7 @@ namespace Dmail.Presentation.Menus
                             var confirmation1 = MainMenu.ConfirmationDialog();
                             if (!confirmation1)
                                 break;
-                            var check = SpamMenu.spamRepo.TryAdd(AccountMenus.UserId, message.SenderId);
+                            var check = Info.Repos.SpamRepo.TryAdd(Info.UserId, message.SenderId);
                             if (check != ResponseType.Success)
                             {
                                 Console.WriteLine("Došlo je do greške pri stvaranju spem konekcije ili već postoji ta spam konekcija");
@@ -243,14 +241,14 @@ namespace Dmail.Presentation.Menus
                                 break;
                             }
                             messages.Remove(message);
-                            Console.WriteLine("Uspješno dodana spam konekcija između korisnika " + userRepo.GetUser(AccountMenus.UserId).Email + " i " + message.SenderEmail);
+                            Console.WriteLine("Uspješno dodana spam konekcija između korisnika " + userRepo.GetUser(Info.UserId).Email + " i " + message.SenderEmail);
                             Console.ReadLine();
                             break;
                         case "3":
                             var confirmation2 = MainMenu.ConfirmationDialog();
                             if (!confirmation2)
                                 break;
-                            var check2 = messageReceiversRepo.Delete(AccountMenus.UserId, message.Id);
+                            var check2 = messageReceiversRepo.Delete(Info.UserId, message.Id);
                             if (message.AllEmails.Count() == 1)
                                 messageRepo.Delete(message.Id);
                             messages.Remove(message);
@@ -274,8 +272,8 @@ namespace Dmail.Presentation.Menus
                                     return;
                                 if (confirm == "1")
                                     answer = "Prihvaćen";
-                                var newMessage = messageRepo.NewMessage(AccountMenus.UserId, false, DateTime.MinValue, $"Odgovor na {message.Title}", answer);
-                                var check3 = messageReceiversRepo.UpdateAnswerToEvent(message.Id, AccountMenus.UserId, confirm == "1");
+                                var newMessage = messageRepo.NewMessage(Info.UserId, false, DateTime.MinValue, $"Odgovor na {message.Title}", answer);
+                                var check3 = messageReceiversRepo.UpdateAnswerToEvent(message.Id, Info.UserId, confirm == "1");
                                 if (check3 != ResponseType.Success)
                                 {
                                     Console.WriteLine("Već ste odgovorili na ovaj event istim odgovorom, ako želite poslati novu poruku na event onda morate imati izmijenjen odgovor");

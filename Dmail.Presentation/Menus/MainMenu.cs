@@ -8,7 +8,6 @@ namespace Dmail.Presentation.Menus
     public static class MainMenu
     {
         public static int _choice;
-        public static UserRepo userRepo;
         public static void Content()
         {
             while (true)
@@ -37,16 +36,16 @@ namespace Dmail.Presentation.Menus
                         IncomingMessageMenu.Content();
                         break;
                     case 2:
-                        OutgoingMessageMenu.GetSentMessages(userRepo, new MessageRepo(DmailDbContextFactory.GetDmailContext()));
+                        OutgoingMessageMenu.GetSentMessages(Info.Repos.UserRepo, Info.Repos.MessageRepo);
                         break;
                     case 3:
                         SpamMessageMenu.Content();
                         break;
                     case 4:
-                        NewMessageMenu.NewMessage(userRepo,IncomingMessageMenu.messageRepo, IncomingMessageMenu.messageReceiversRepo);
+                        NewMessageMenu.NewMessage(Info.Repos.UserRepo,Info.Repos.MessageRepo, Info.Repos.MessageReceiversRepo);
                         break;
                     case 5:
-                        NewMessageMenu.NewEvent(userRepo, IncomingMessageMenu.messageRepo, IncomingMessageMenu.messageReceiversRepo);
+                        NewMessageMenu.NewEvent(Info.Repos.UserRepo, Info.Repos.MessageRepo, Info.Repos.MessageReceiversRepo);
                         break;
                     case 6:
                         SettingsMenu.Content();
@@ -92,10 +91,10 @@ namespace Dmail.Presentation.Menus
                         Environment.Exit(0);
                         break;
                     case "1":
-                        AccountMenus.AuthMenu(userRepo);
+                        AccountMenus.AuthMenu(Info.Repos.UserRepo);
                         break;
                     case "2":
-                        AccountMenus.NewAccount(userRepo);
+                        AccountMenus.NewAccount(Info.Repos.UserRepo);
                         break;
                     default:
                         Console.WriteLine("Krivi upis");

@@ -20,7 +20,7 @@ namespace Dmail.Presentation.Menus
         {
             Console.Clear();
             Console.WriteLine("Korisnici koji šalju");
-            var allSenders = IncomingMessageMenu.messageRepo.GetSenderUsers(AccountMenus.UserId);
+            var allSenders = Info.Repos.MessageRepo.GetSenderUsers(Info.UserId);
             if (allSenders.Count() == 0)
             {
                 Console.WriteLine("Dosada ovome mailu nije upućena ni jedna poruka");
@@ -29,7 +29,7 @@ namespace Dmail.Presentation.Menus
             }
             Prints.PrintUsers(allSenders);
             Console.WriteLine("Korisnici kojima ste slali:");
-            var allReceivers = IncomingMessageMenu.messageRepo.GetReceiverUsers(AccountMenus.UserId);
+            var allReceivers = Info.Repos.MessageRepo.GetReceiverUsers(Info.UserId);
             if (allReceivers.Count() == 0)
             {
                 Console.WriteLine("Izgleda da nema maila poslanog na bilo kojeg korisnika trenutno");
