@@ -85,6 +85,12 @@ namespace Dmail.Presentation.Menus
                 messages = SpamMenu.spamRepo.GetSeenMessages(AccountMenus.UserId);
             }
             Console.Clear();
+            if (messages.Count == 0)
+            {
+                Console.WriteLine("Nijedna poruka nije pronađena");
+                Console.ReadLine();
+                return;
+            }
             MessagesMenu(messages);
 
         }
@@ -102,6 +108,12 @@ namespace Dmail.Presentation.Menus
                 messages = SpamMenu.spamRepo.GetNonSeenMessages(AccountMenus.UserId);
             };
             Console.Clear();
+            if (messages.Count == 0)
+            {
+                Console.WriteLine("Nijedna poruka nije pronađena");
+                Console.ReadLine();
+                return;
+            }
             MessagesMenu(messages);
 
         }

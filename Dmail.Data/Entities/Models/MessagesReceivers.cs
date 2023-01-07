@@ -1,4 +1,6 @@
 ﻿using Dmail.Data.Enums;
+using Microsoft.EntityFrameworkCore.Metadata;
+
 namespace Dmail.Data.Entities.Models
 {
     public class MessagesReceivers

@@ -7,6 +7,7 @@ using Dmail.Data.Entities;
 using Dmail.Data.Entities.Models;
 using Dmail.Domain.Enums;
 using Dmail.Data.Enums;
+using Dmail.Domain.Interfaces;
 
 namespace Dmail.Domain.Repositories
 {
