@@ -48,7 +48,7 @@ namespace Dmail.Presentation.Menus
                         NewMessageMenu.NewEvent(Info.Repos.UserRepo, Info.Repos.MessageRepo, Info.Repos.MessageReceiversRepo);
                         break;
                     case 6:
-                        SettingsMenu.PrintUsers(Info.Repos.MessageRepo);
+                        SettingsMenu.GetUsers(Info.Repos.MessageRepo);
                         break;
                     case 7:
                         return;

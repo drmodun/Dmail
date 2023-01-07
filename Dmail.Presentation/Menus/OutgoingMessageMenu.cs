@@ -37,6 +37,8 @@ namespace Dmail.Presentation.Menus
         {
             while (true)
             {
+                Console.Clear();
+                PrintMessages(messages);
                 Console.WriteLine("Detaljan ispis poruka");
                 var select = Console.ReadLine();
                 var selectId = -1;
@@ -105,6 +107,7 @@ namespace Dmail.Presentation.Menus
             while (true)
             {
                 Console.Clear();
+                messages=messages.OrderByDescending(m => m.CreatedAt).ToList();
                 PrintMessages(messages);
                 Console.WriteLine("Upišite što želite s porukama");
                 Console.WriteLine("1 - Detaljni ispis");
@@ -122,6 +125,12 @@ namespace Dmail.Presentation.Menus
                         break;
                     case "2":
                         Console.Clear();
+                        if (messagesCopy.Count == 0)
+                        {
+                            Console.WriteLine("Nema nijedan mail poslan ovome računu");
+                            Console.ReadLine();
+                            break;
+                        }
                         Console.WriteLine("Ispis svih mailova");
                         PrintMessages(messagesCopy);
                         messages = ChooseMessage(Info.Repos.MessageRepo, Info.Repos.MessageReceiversRepo, messagesCopy);
@@ -132,6 +141,12 @@ namespace Dmail.Presentation.Menus
                         break;
                     case "3":
                         Console.Clear();
+                        if (eventsCopy.Count == 0)
+                        {
+                            Console.WriteLine("Nema nijedan mail poslan ovome računu");
+                            Console.ReadLine();
+                            break;
+                        }
                         Console.WriteLine("Ispis svih događaja");
                         PrintMessages(eventsCopy);
                         messages = ChooseMessage(Info.Repos.MessageRepo, Info.Repos.MessageReceiversRepo, eventsCopy);

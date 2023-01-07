@@ -104,6 +104,12 @@ namespace Dmail.Presentation.Menus
                         break;
                     case "2":
                         Console.Clear();
+                        if (messagesCopy.Count == 0)
+                        {
+                            Console.WriteLine("Nema nijedan mail poslan ovome računu");
+                            Console.ReadLine();
+                            break;
+                        }
                         Console.WriteLine("Ispis svih mailova");
                         messages = ChooseMessage(Info.Repos.UserRepo, Info.Repos.MessageRepo, Info.Repos.MessageReceiversRepo, messagesCopy, seen);
                         foreach(var eventEnumerate in eventsCopy)
@@ -113,6 +119,12 @@ namespace Dmail.Presentation.Menus
                         break;
                     case "3":
                         Console.Clear();
+                        if (eventsCopy.Count == 0)
+                        {
+                            Console.WriteLine("Nema nijedan događaj poslan ovome računu");
+                            Console.ReadLine();
+                            break;
+                        }
                         Console.WriteLine("Ispis svih događaja");
                         messages = ChooseMessage(Info.Repos.UserRepo, Info.Repos.MessageRepo, Info.Repos.MessageReceiversRepo, eventsCopy, seen);
                         foreach (var messageEnumerate in messagesCopy)
@@ -130,6 +142,7 @@ namespace Dmail.Presentation.Menus
             var actions = new MessageActions();
             while (true)
             {
+                Console.Clear();
                 PrintMessages(messages);
                 Console.WriteLine("Detaljan ispis poruka");
                 Console.WriteLine("Upišite redni broj koje poruke želite pristupiti");
@@ -159,12 +172,12 @@ namespace Dmail.Presentation.Menus
         {
             var selectId = -1;
             var actions = new MessageActions();
-            actions.GetMessageAndUpdateSeenStatus(message, messageReceiversRepo);
             if (seen==0)
                 messages.Remove(message);   
             var userActions = new AccounActions();
             while (true)
             {
+                actions.GetMessageAndUpdateSeenStatus(message, messageReceiversRepo);
                 Console.WriteLine("Akcije");
                 Console.WriteLine("1 - Označi kao nepročitano");
                 Console.WriteLine("2 - Označi kao spam");

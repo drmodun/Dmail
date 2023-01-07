@@ -23,17 +23,12 @@ namespace Dmail.Presentation.Menus
             return list;
 
         }
-        public static void PrintMessage(MessagePrint messageToPrint)
-        {
-            Console.WriteLine("Naslov: " + messageToPrint.Title);
-            Console.WriteLine("Pošiljatelj: " + messageToPrint.SenderEmail);
-        }
         public static void PrintDetailedMessage(MessagePrint messageToPrint, bool sender)
         {
             Console.Clear();
             Console.WriteLine("Naslov: " + messageToPrint.Title);
             Console.WriteLine("Poruka: " + messageToPrint.Body);
-            Console.WriteLine("Poslano na: " + messageToPrint.CreatedAt);
+            Console.WriteLine("Poslano na: " + messageToPrint.CreatedAt.AddHours(1));
             Console.WriteLine("Pošiljatelj: " + messageToPrint.SenderEmail);
             if (sender)
             {
@@ -45,7 +40,7 @@ namespace Dmail.Presentation.Menus
         {
             Console.Clear();
             Console.WriteLine("Naslov događaja: " + messageToPrint.Title);
-            Console.WriteLine("Događa se u: " + messageToPrint.DateOfEvent);
+            Console.WriteLine("Događa se u: " + messageToPrint.DateOfEvent.AddHours(1));
             Console.WriteLine("Pošiljatelj: " + messageToPrint.SenderEmail);
             var emails = TranslatedEmails(messageToPrint.AllEmails);
             Console.WriteLine("Pozvani korisnici: " + string.Join(", ", emails));

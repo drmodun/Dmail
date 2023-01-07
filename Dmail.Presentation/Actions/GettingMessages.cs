@@ -53,7 +53,7 @@ namespace Dmail.Presentation.Actions
                 Console.ReadLine();
                 return;
             }
-           IncomingMessageMenu.MessagesMenu(messages, 2);
+           IncomingMessageMenu.MessagesMenu(messages, 0);
 
         }
         public void GetMessagesbySender(UserRepo userRepo, MessageRepo messageRepo, bool spam)

@@ -72,6 +72,7 @@ namespace Dmail.Presentation.Menus
                     return;
                 }
                 Console.WriteLine($"Račun {blocked.Email} blokiran");
+            blocked.Blocked = true;
                 Console.ReadLine();
                 return;
 
@@ -97,6 +98,7 @@ namespace Dmail.Presentation.Menus
                 }
                 Console.WriteLine("Uspješno odblokiran korisnik "+unblocked.Email);
                 Console.ReadLine();
+            unblocked.Blocked = false;
                 return;
                 
                 

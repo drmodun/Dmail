@@ -3,6 +3,7 @@ using Dmail.Domain.Repositories;
 using Dmail.Presentation.Actions;
 using System;
 using System.Collections.Generic;
+using System.Drawing.Printing;
 using System.Linq;
 using System.Net.WebSockets;
 using System.Reflection.Metadata.Ecma335;
@@ -14,12 +15,11 @@ namespace Dmail.Presentation.Menus
     public static class SettingsMenu
     {
         
-        public static void PrintUsers(MessageRepo messageRepo)
+        public static void GetUsers(MessageRepo messageRepo)
         {
             Console.Clear();
             var actions = new GetUsers();
             Console.Clear();
-            Console.WriteLine("Korisnici koji šalju");
             var allSenders = actions.GetSenderUsers(Info.UserId, messageRepo);
             if (allSenders.Count() == 0)
             {
@@ -27,8 +27,6 @@ namespace Dmail.Presentation.Menus
                 Console.ReadLine();
                 return;
             }
-            Prints.PrintUsers(allSenders);
-            Console.WriteLine("Korisnici kojima ste slali:");
             var allReceivers =actions.GetReceiverUsers(Info.UserId, messageRepo);
             if (allReceivers.Count() == 0)
             {
@@ -36,17 +34,23 @@ namespace Dmail.Presentation.Menus
                 Console.ReadLine();
                 return;
             }
-            Prints.PrintUsers(allReceivers);
             Menu(allSenders, allReceivers);
         }
         public static void Menu(ICollection<UserPrint> allSenders, ICollection<UserPrint> allReceivers)
         {
+
             while (true)
             {
+                Console.Clear();
+                Console.WriteLine("Svi korisnici kojima ste slali");
+                Prints.PrintUsers(allSenders);
+                Console.WriteLine("Svi korisnici kojima saljete");
+                Prints.PrintUsers(allReceivers);
                 Console.WriteLine("Upišite što želite s korisnicima napraviti");
                 Console.WriteLine("1 - filter na korisnike koje ste blokirali");
                 Console.WriteLine("2 - filter na korisnike koje niste blokirali");
                 Console.WriteLine("3 - Opcije za blokiranje koriniska");
+                Console.WriteLine("0 - Main menu");
                 var choice = Console.ReadLine();
                 ICollection<UserPrint> sendersCopy;
                 ICollection<UserPrint> receiversCopy; 
