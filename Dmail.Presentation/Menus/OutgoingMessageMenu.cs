@@ -33,7 +33,7 @@ namespace Dmail.Presentation.Menus
             Console.Clear();
             MessagesMenu(messages);
         }
-        public static void ChooseMessage(MessageRepo messageRepo, MessageReceiversRepo messageReceiversRepo, ICollection<MessagePrint> messages)
+        public static ICollection<MessagePrint> ChooseMessage(MessageRepo messageRepo, MessageReceiversRepo messageReceiversRepo, ICollection<MessagePrint> messages)
         {
             while (true)
             {
@@ -42,7 +42,7 @@ namespace Dmail.Presentation.Menus
                 var selectId = -1;
                 int.TryParse(select, out selectId);
                 if (selectId == 0) {
-                    return;
+                    return messages;
                 }
                 if (selectId<0 || selectId>messages.Count())
                 {
@@ -57,7 +57,8 @@ namespace Dmail.Presentation.Menus
                 else
                     Prints.PrintDetailedMessage(message, true);
                 messages = MessageDetailedMenu(message, selectId, messageRepo, messageReceiversRepo, messages);
-                
+                return messages;
+
             }
         }
         public static ICollection<MessagePrint> MessageDetailedMenu(MessagePrint message, int selectId, MessageRepo messageRepo, MessageReceiversRepo messageReceiversRepo, ICollection<MessagePrint> messages)
@@ -84,14 +85,13 @@ namespace Dmail.Presentation.Menus
                             check = actions.DeleteMessageConnection(message.Id, item, messageReceiversRepo);
                         }
                         check = actions.DeleteMessage(messageRepo, message.Id);
-                        messages.Remove(message);
                         if (check != ResponseType.Success)
                         {
                             Console.WriteLine("Nije moguće izbrisati poruku");
                             Console.ReadLine();
                             return messages;
                         }
-
+                        messages.Remove(message);
                         return messages;
                     default:
                         Console.WriteLine("Krivi upis");
@@ -115,21 +115,21 @@ namespace Dmail.Presentation.Menus
                 switch (choice)
                 {
                     case "1":
-                        ChooseMessage(Info.Repos.MessageRepo, Info.Repos.MessageReceiversRepo, messages);
+                        messages = ChooseMessage(Info.Repos.MessageRepo, Info.Repos.MessageReceiversRepo, messages);
                         break;
                     case "2":
                         var messagesCopy = messages.Where(x => x.IsEvent == false).ToList();
                         Console.Clear();
                         Console.WriteLine("Ispis svih mailova");
                         PrintMessages(messagesCopy);
-                        ChooseMessage(Info.Repos.MessageRepo, Info.Repos.MessageReceiversRepo, messagesCopy);
+                        messages = ChooseMessage(Info.Repos.MessageRepo, Info.Repos.MessageReceiversRepo, messagesCopy);
                         break;
                     case "3":
                         var eventsCopy = messages.Where(x => x.IsEvent == true).ToList();
                         Console.Clear();
                         Console.WriteLine("Ispis svih događaja");
                         PrintMessages(eventsCopy);
-                        ChooseMessage(Info.Repos.MessageRepo, Info.Repos.MessageReceiversRepo, eventsCopy);
+                        messages = ChooseMessage(Info.Repos.MessageRepo, Info.Repos.MessageReceiversRepo, eventsCopy);
                         break;
                     default:
                         return;

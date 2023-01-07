@@ -14,6 +14,7 @@ using System.Runtime.InteropServices;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Dmail.Data.Entities.Models;
 using Dmail.Presentation.Actions;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace Dmail.Presentation.Menus
 {
@@ -88,20 +89,19 @@ namespace Dmail.Presentation.Menus
                 switch (choice)
                 {
                     case "1":
+                        Console.Clear();
                         ChooseMessage(Info.Repos.UserRepo, Info.Repos.MessageRepo, Info.Repos.MessageReceiversRepo, messages);
                         break;
                     case "2":
                         var messagesCopy = messages.Where(x => x.IsEvent == false).ToList();
                         Console.Clear();
                         Console.WriteLine("Ispis svih mailova");
-                        PrintMessages(messagesCopy);
                         ChooseMessage(Info.Repos.UserRepo, Info.Repos.MessageRepo, Info.Repos.MessageReceiversRepo, messagesCopy);
                         break;
                     case "3":
                         var eventsCopy = messages.Where(x => x.IsEvent == true).ToList();
                         Console.Clear();
                         Console.WriteLine("Ispis svih događaja");
-                        PrintMessages(eventsCopy);
                         ChooseMessage(Info.Repos.UserRepo, Info.Repos.MessageRepo, Info.Repos.MessageReceiversRepo, eventsCopy);
                         break;
                     default:
@@ -114,6 +114,7 @@ namespace Dmail.Presentation.Menus
             var actions = new MessageActions();
             while (true)
             {
+                PrintMessages(messages);
                 Console.WriteLine("Detaljan ispis poruka");
                 Console.WriteLine("Upišite redni broj koje poruke želite pristupiti");
                 var select = Console.ReadLine();
@@ -135,11 +136,11 @@ namespace Dmail.Presentation.Menus
                 }
                 var message = messages.ElementAt(selectId - 1);
                 actions.GetMessageAndUpdateSeenStatus(message, messageReceiversRepo);
-                DetailedMessageMenu(message, messageRepo, messageReceiversRepo, userRepo, messages);
+                messages = DetailedMessageMenu(message, messageRepo, messageReceiversRepo, userRepo, messages);
 
             }
         }
-        public static bool DetailedMessageMenu(MessagePrint message, MessageRepo messageRepo, MessageReceiversRepo messageReceiversRepo, UserRepo userRepo, ICollection<MessagePrint> messages)
+        public static ICollection<MessagePrint> DetailedMessageMenu(MessagePrint message, MessageRepo messageRepo, MessageReceiversRepo messageReceiversRepo, UserRepo userRepo, ICollection<MessagePrint> messages)
         {
             var selectId= -1;
             var actions = new MessageActions();
@@ -158,7 +159,7 @@ namespace Dmail.Presentation.Menus
                 var choice = Console.ReadLine();
                 int.TryParse(choice, out selectId);
                 if (choice == "0")
-                    return false;
+                    return messages;
                 switch (selectId.ToString())
                 {
                     case "1":
@@ -174,7 +175,7 @@ namespace Dmail.Presentation.Menus
                         }
                         Console.WriteLine("Uspješno poruka označena kao nepročitana");
                         Console.ReadLine();
-                        break;
+                        return messages;
                     case "2":
                         var confirmation1 = MainMenu.ConfirmationDialog();
                         if (!confirmation1)
@@ -189,7 +190,7 @@ namespace Dmail.Presentation.Menus
                         messages.Remove(message);
                         Console.WriteLine("Uspješno dodana spam konekcija između korisnika " + userActions.GetUserEmail(Info.UserId) + " i " + message.SenderEmail);
                         Console.ReadLine();
-                        break;
+                        return messages;
                     case "3":
                         var confirmation2 = MainMenu.ConfirmationDialog();
                         if (!confirmation2)
@@ -206,7 +207,7 @@ namespace Dmail.Presentation.Menus
                         }
                         Console.WriteLine("Uspješno izbrisan mail");
                         Console.ReadLine();
-                        return true;
+                        return messages;    
                     case "4":
                         if (message.IsEvent)
                         {
@@ -215,7 +216,7 @@ namespace Dmail.Presentation.Menus
                             var confirmation3 = MainMenu.ConfirmationDialog();
                             var answer = "Odbijen";
                             if (!confirmation3)
-                                return false;
+                                return messages;
                             if (confirm == "1")
                                 answer = "Prihvaćen";
                             var newMessage = actions.GenerateMessage(messageRepo, "Odgovor na "+message.Title, answer);
@@ -246,7 +247,7 @@ namespace Dmail.Presentation.Menus
                         Console.ReadLine(); break;
                 }
             }
-            return false;
+            return messages;
 
         }
     }

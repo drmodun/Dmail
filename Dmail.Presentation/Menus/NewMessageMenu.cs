@@ -61,6 +61,13 @@ namespace Dmail.Presentation.Menus
                 var emailIds = new List<int>();
                 if (emails.Contains("0"))
                     return;
+                var emailCheck = true;
+                if (emails.Length == 0)
+                {
+                    Console.WriteLine("Niste upisali ni jedan mail");
+                    Console.ReadLine();
+                    continue;
+                }
                 foreach (var email in emails)
                 {
                     var id = actions.GetUserIdByEmail(email, userRepo);
@@ -68,19 +75,23 @@ namespace Dmail.Presentation.Menus
                     {
                         Console.WriteLine("Neki od mailova ne postoje");
                         Console.ReadLine();
+                        emailCheck = false;
                         continue;
                     }
                     if (emailIds.Contains(id))
                     {
                         Console.WriteLine("Ne možete istoj osobi dva puta poslati isti mail");
                         Console.ReadLine();
+                        emailCheck = false;
                         continue;
                     }
                     emailIds.Add(id);
                 }
-                    var check = NewMessageContent(emailIds, userRepo, messageRepo, messageReceiversRepo);
-                    if (check)
-                        return;
+                if (!emailCheck)
+                    continue;
+                var check = NewMessageContent(emailIds, userRepo, messageRepo, messageReceiversRepo);
+                if (check)
+                    return;
             }
         }
         public static bool NewMessageContent(List<int> emailIds, UserRepo userRepo, MessageRepo messageRepo, MessageReceiversRepo messageReceiversRepo)
