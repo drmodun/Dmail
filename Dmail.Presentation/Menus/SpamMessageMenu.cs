@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Dmail.Domain.Factories;
+using Dmail.Presentation.Actions;
 
 namespace Dmail.Presentation.Menus
 {
@@ -18,6 +19,7 @@ namespace Dmail.Presentation.Menus
                 _choice = -1;
                 while (true)
                 {
+                    var actions = new GettingMessages();
                     Console.Clear();
                     Console.WriteLine("Spam menu");
                     Console.WriteLine("Izaberite opciju");
@@ -36,13 +38,13 @@ namespace Dmail.Presentation.Menus
                     switch (_choice)
                     {
                         case 1:
-                            IncomingMessageMenu.GetSeenMessages(Info.Repos.UserRepo, Info.Repos.MessageRepo, true);
+                            actions.GetSeenMessages(Info.Repos.UserRepo, Info.Repos.MessageRepo, true);
                             break;
                         case 2:
-                           IncomingMessageMenu.GetNonSeenMessages(Info.Repos.UserRepo, Info.Repos.MessageRepo, Info.Repos.MessageReceiversRepo, true);
+                           actions.GetNonSeenMessages(Info.Repos.UserRepo, Info.Repos.MessageRepo, Info.Repos.MessageReceiversRepo, true);
                             break;
                         case 3:
-                            IncomingMessageMenu.GetMessagesbySender(Info.Repos.UserRepo, Info.Repos.MessageRepo, true);
+                            actions.GetMessagesbySender(Info.Repos.UserRepo, Info.Repos.MessageRepo, true);
                             break;
                         case 0:
                             return;

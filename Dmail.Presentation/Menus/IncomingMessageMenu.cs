@@ -13,6 +13,7 @@ using Dmail.Domain.Enums;
 using System.Runtime.InteropServices;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Dmail.Data.Entities.Models;
+using Dmail.Presentation.Actions;
 
 namespace Dmail.Presentation.Menus
 {
@@ -25,6 +26,7 @@ namespace Dmail.Presentation.Menus
             _choice = -1;
             while (true)
             {
+                var actions = new GettingMessages();
                 Console.Clear();
                 Console.WriteLine("Izaberite opciju");
                 Console.WriteLine("1 - Pročitana pošta");
@@ -42,13 +44,13 @@ namespace Dmail.Presentation.Menus
                 switch (_choice)
                 {
                     case 1:
-                        GetSeenMessages(Info.Repos.UserRepo, Info.Repos.MessageRepo, false);
+                        actions.GetSeenMessages(Info.Repos.UserRepo, Info.Repos.MessageRepo, false);
                         break;
                     case 2:
-                        GetNonSeenMessages(Info.Repos.UserRepo, Info.Repos.MessageRepo, Info.Repos.MessageReceiversRepo, false);
+                       actions.GetNonSeenMessages(Info.Repos.UserRepo, Info.Repos.MessageRepo, Info.Repos.MessageReceiversRepo, false);
                         break;
                     case 3:
-                        GetMessagesbySender(Info.Repos.UserRepo, Info.Repos.MessageRepo, false);
+                       actions.GetMessagesbySender(Info.Repos.UserRepo, Info.Repos.MessageRepo, false);
                         break;
                     case 0:
                         return;
@@ -70,75 +72,7 @@ namespace Dmail.Presentation.Menus
                 Console.WriteLine(" ");
             }
         }
-        public static void GetSeenMessages(UserRepo userRepo, MessageRepo messageRepo, bool spam)
-        {
-            Console.WriteLine("Pročitane poruke");
-            ICollection<MessagePrint> messages = null;
-            if (!spam)
-            {
-                messages = messageRepo.GetSeenMessages(Info.UserId);
-            }
-            else
-            {
-                messages = Info.Repos.SpamRepo.GetSeenMessages(Info.UserId);
-            }
-            Console.Clear();
-            if (messages.Count == 0)
-            {
-                Console.WriteLine("Nijedna poruka nije pronađena");
-                Console.ReadLine();
-                return;
-            }
-            MessagesMenu(messages);
-
-        }
-        public static void GetNonSeenMessages(UserRepo userRepo, MessageRepo messageRepo, MessageReceiversRepo messageReceiversRepo, bool spam)
-        {
-            Console.Clear();
-            Console.WriteLine("Nepročitane poruke");
-            ICollection<MessagePrint> messages = null;
-            if (!spam)
-            {
-                messages = messageRepo.GetNonSeenMessages(Info.UserId);
-            }
-            else
-            {
-                messages = Info.Repos.SpamRepo.GetNonSeenMessages(Info.UserId);
-            };
-            Console.Clear();
-            if (messages.Count == 0)
-            {
-                Console.WriteLine("Nijedna poruka nije pronađena");
-                Console.ReadLine();
-                return;
-            }
-            MessagesMenu(messages);
-
-        }
-        public static void GetMessagesbySender(UserRepo userRepo, MessageRepo messageRepo, bool spam)
-        {
-            var senderId = -1;
-            Console.WriteLine("Poruke od specifičnog pošiljatelja");
-            var sender = Console.ReadLine();
-            ICollection<MessagePrint> messages;
-            if (!spam)
-            {
-                messages = messageRepo.GetMessagesBySender(Info.UserId, sender);
-            }
-            else
-            {
-                messages = Info.Repos.SpamRepo.GetMessagesBySender(Info.UserId, sender);
-            }
-            if (messages.Count() == 0)
-            {
-                Console.WriteLine("Nije pronađena ni jedna poruka poslana od tog maila");
-                Console.ReadLine();
-                return;
-            }
-            Console.Clear();
-            MessagesMenu(messages);
-
-        }
+        
         public static void MessagesMenu(ICollection<MessagePrint> messages)
         {
             while (true)
@@ -177,6 +111,7 @@ namespace Dmail.Presentation.Menus
         }
         public static void ChooseMessage(UserRepo userRepo, MessageRepo messageRepo, MessageReceiversRepo messageReceiversRepo, ICollection<MessagePrint> messages)
         {
+            var actions = new MessageActions();
             while (true)
             {
                 Console.WriteLine("Detaljan ispis poruka");
@@ -198,117 +133,121 @@ namespace Dmail.Presentation.Menus
                     Console.ReadLine();
                     continue;
                 }
-                var message = messages.ElementAt(selectId-1);
-                messageReceiversRepo.Update(message.Id, Info.UserId, true);
+                var message = messages.ElementAt(selectId - 1);
+                actions.GetMessageAndUpdateSeenStatus(message, messageReceiversRepo);
+                DetailedMessageMenu(message, messageRepo, messageReceiversRepo, userRepo, messages);
+
+            }
+        }
+        public static bool DetailedMessageMenu(MessagePrint message, MessageRepo messageRepo, MessageReceiversRepo messageReceiversRepo, UserRepo userRepo, ICollection<MessagePrint> messages)
+        {
+            var selectId= -1;
+            var actions = new MessageActions();
+            var userActions = new AccounActions();
+            while (true)
+            {
+                Console.WriteLine("Akcije");
+                Console.WriteLine("1 - Označi kao nepročitano");
+                Console.WriteLine("2 - Označi kao spam");
+                Console.WriteLine("3 - Izbriši mail");
                 if (message.IsEvent)
-                    Prints.PrintDetailedEvent(message, messageReceiversRepo.GetStatus(Info.UserId, message.Id));
+                    Console.WriteLine("4 - Odgovori na poziv za događaj");
                 else
-                    Prints.PrintDetailedMessage(message, false);
-                while (true)
+                    Console.WriteLine("4 - Odgovori na mail");
+                Console.WriteLine("Upiši 0 za povratak na prijašnji menu");
+                var choice = Console.ReadLine();
+                int.TryParse(choice, out selectId);
+                if (choice == "0")
+                    return false;
+                switch (selectId.ToString())
                 {
-                    Console.WriteLine("Akcije");
-                    Console.WriteLine("1 - Označi kao nepročitano");
-                    Console.WriteLine("2 - Označi kao spam");
-                    Console.WriteLine("3 - Izbriši mail");
-                    if (message.IsEvent)
-                        Console.WriteLine("4 - Odgovori na poziv za događaj");
-                    else
-                        Console.WriteLine("4 - Odgovori na mail");
-                    Console.WriteLine("Upiši 0 za povratak na prijašnji menu");
-                    var choice = Console.ReadLine();
-                    int.TryParse(choice, out selectId);
-                    if (choice == "0")
-                        return;
-                    switch (selectId.ToString())
-                    {
-                        case "1":
-                            var confirmation = MainMenu.ConfirmationDialog();
-                            if (!confirmation)
-                                break;
-                            messageReceiversRepo.Update(message.Id, Info.UserId, false);
-                            Console.WriteLine("Uspješno poruka označena kao nepročitana");
+                    case "1":
+                        var confirmation = MainMenu.ConfirmationDialog();
+                        if (!confirmation)
+                            break;
+                        var checkResponse = actions.SetMessageAsUnseen(message, messageReceiversRepo, Info.UserId);
+                        if (checkResponse != ResponseType.Success)
+                        {
+                            Console.WriteLine("Došlo je do greške");
                             Console.ReadLine();
                             break;
-                        case "2":
-                            var confirmation1 = MainMenu.ConfirmationDialog();
-                            if (!confirmation1)
-                                break;
-                            var check = Info.Repos.SpamRepo.TryAdd(Info.UserId, message.SenderId);
-                            if (check != ResponseType.Success)
+                        }
+                        Console.WriteLine("Uspješno poruka označena kao nepročitana");
+                        Console.ReadLine();
+                        break;
+                    case "2":
+                        var confirmation1 = MainMenu.ConfirmationDialog();
+                        if (!confirmation1)
+                            break;
+                        var check = userActions.CreateNewSpamConnection(message.SenderId);
+                        if (check != ResponseType.Success)
+                        {
+                            Console.WriteLine("Došlo je do greške pri stvaranju spem konekcije ili već postoji ta spam konekcija");
+                            Console.ReadLine();
+                            break;
+                        }
+                        messages.Remove(message);
+                        Console.WriteLine("Uspješno dodana spam konekcija između korisnika " + userActions.GetUserEmail(Info.UserId) + " i " + message.SenderEmail);
+                        Console.ReadLine();
+                        break;
+                    case "3":
+                        var confirmation2 = MainMenu.ConfirmationDialog();
+                        if (!confirmation2)
+                            break;
+                        var check2 = actions.DeleteMessageConnection(message.Id, Info.UserId, messageReceiversRepo);
+                        if (message.AllEmails.Count() == 1)
+                            actions.DeleteMessage(messageRepo,message.Id);
+                        messages.Remove(message);
+                        if (check2 != ResponseType.Success)
+                        {
+                            Console.WriteLine("Došlo je do pogreške pri brisanju maila");
+                            Console.ReadLine();
+                            break;
+                        }
+                        Console.WriteLine("Uspješno izbrisan mail");
+                        Console.ReadLine();
+                        return true;
+                    case "4":
+                        if (message.IsEvent)
+                        {
+                            Console.WriteLine("Upišite 0 da biste odbili događaj i 1 da biste ga prihvatili");
+                            var confirm = Console.ReadLine();
+                            var confirmation3 = MainMenu.ConfirmationDialog();
+                            var answer = "Odbijen";
+                            if (!confirmation3)
+                                return false;
+                            if (confirm == "1")
+                                answer = "Prihvaćen";
+                            var newMessage = actions.GenerateAnswer(messageRepo, message, answer);
+                            var check3 = actions.AnswerEvent(messageReceiversRepo, Info.UserId, message.Id,  confirm == "1");
+                            if (check3 != ResponseType.Success)
                             {
-                                Console.WriteLine("Došlo je do greške pri stvaranju spem konekcije ili već postoji ta spam konekcija");
+                                Console.WriteLine("Već ste odgovorili na ovaj event istim odgovorom, ako želite poslati novu poruku na event onda morate imati izmijenjen odgovor");
                                 Console.ReadLine();
                                 break;
                             }
-                            messages.Remove(message);
-                            Console.WriteLine("Uspješno dodana spam konekcija između korisnika " + userRepo.GetUser(Info.UserId).Email + " i " + message.SenderEmail);
-                            Console.ReadLine();
-                            break;
-                        case "3":
-                            var confirmation2 = MainMenu.ConfirmationDialog();
-                            if (!confirmation2)
-                                break;
-                            var check2 = messageReceiversRepo.Delete(Info.UserId, message.Id);
-                            if (message.AllEmails.Count() == 1)
-                                messageRepo.Delete(message.Id);
-                            messages.Remove(message);
-                            if (check2 != ResponseType.Success)
+                            var check4 = messageReceiversRepo.NewConnection(newMessage, message.SenderId);
+                            if (check4 != ResponseType.Success)
                             {
-                                Console.WriteLine("Došlo je do pogreške pri brisanju maila");
+                                Console.WriteLine("Došlo je do pogrešku pri odgovaranju na poruku");
                                 Console.ReadLine();
                                 break;
                             }
-                            Console.WriteLine("Uspješno izbrisan mail");
+                            Console.WriteLine("Uspješno napravljena poruka");
                             Console.ReadLine();
-                            return;
-                        case "4":
-                            if (message.IsEvent)
-                            {
-                                Console.WriteLine("Upišite 0 da biste odbili događaj i 1 da biste ga prihvatili");
-                                var confirm = Console.ReadLine();
-                                var confirmation3 = MainMenu.ConfirmationDialog();
-                                var answer = "Odbijen";
-                                if (!confirmation3)
-                                    return;
-                                if (confirm == "1")
-                                    answer = "Prihvaćen";
-                                var newMessage = messageRepo.NewMessage(Info.UserId, false, DateTime.MinValue, $"Odgovor na {message.Title}", answer);
-                                var check3 = messageReceiversRepo.UpdateAnswerToEvent(message.Id, Info.UserId, confirm == "1");
-                                if (check3 != ResponseType.Success)
-                                {
-                                    Console.WriteLine("Već ste odgovorili na ovaj event istim odgovorom, ako želite poslati novu poruku na event onda morate imati izmijenjen odgovor");
-                                    Console.ReadLine();
-                                    break;
-                                }
-                                var check4 = messageReceiversRepo.NewConnection(newMessage, message.SenderId);
-                                if (check4 != ResponseType.Success)
-                                {
-                                    Console.WriteLine("Došlo je do pogrešku pri odgovaranju na poruku");
-                                    Console.ReadLine();
-                                    break;
-                                }
-                                Console.WriteLine("Uspješno napravljena poruka");
-                                Console.ReadLine();
-                                break;
-
-
-                            }
-                            NewMessageMenu.NewMessageContent(new List<int>() { message.SenderId}, userRepo, messageRepo, messageReceiversRepo);
                             break;
-                        default:
-                            Console.WriteLine("Nije upisan pravi input");
-                            Console.ReadLine() ; break;
-                    }
 
+
+                        }
+                        NewMessageMenu.NewMessageContent(new List<int>() { message.SenderId }, userRepo, messageRepo, messageReceiversRepo);
+                        break;
+                    default:
+                        Console.WriteLine("Nije upisan pravi input");
+                        Console.ReadLine(); break;
                 }
             }
+            return false;
+
         }
     }
 }
-//questions
-/*how many seed data tests
- * are events and emails supposed to be two diffwereent tsbles
- * how much linq do we have to use
- * how much abstraction muzsta we do on presentation layer
- * can I use stratic classesd fgor menus and stuff
- * do we have to use interfaces and stuff like that*/

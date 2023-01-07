@@ -1,6 +1,7 @@
 ﻿using Dmail.Data.Entities;
 using Dmail.Data.Entities.Models;
 using Dmail.Domain.Enums;
+using Dmail.Domain.Models;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;

@@ -1,7 +1,9 @@
 ﻿using Dmail.Domain.Enums;
 using Dmail.Domain.Repositories;
+using Dmail.Presentation.Actions;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Security.Policy;
 using System.Text;
@@ -69,18 +71,10 @@ namespace Dmail.Presentation.Menus
                 var confirmation = MainMenu.ConfirmationDialog();
                 if (!confirmation)
                     continue;
-                var check = createRepo.CreateNewUser(email, password);
-                if (check == ResponseType.Exists)
-                {
-                    Console.WriteLine("Račun s tim emailom već postoji");
-                    Console.ReadLine();
+                var action = new AccounActions();
+                var check = action.CreateAccount(createRepo, email, password);
+                if (!check)
                     continue;
-                }
-                Console.WriteLine($"Uspješno napravljen račun email: {email}");
-                Console.WriteLine("Pretisnite bilo koji butun za nastavak");
-                Console.ReadLine();
-                Info.UserId=createRepo.GetIdByEmail(email);
-                Info.UserEmail=email;
                 MainMenu.Content();
                 return;
             }
@@ -98,7 +92,6 @@ namespace Dmail.Presentation.Menus
                 var email = Console.ReadLine();
                 Console.WriteLine("Šifra: ");
                 var password = Console.ReadLine();
-                var response = authRepo.Auth(email, password);
                 if (email == "0" || password == "0")
                     return;
                 if ((DateTime.Now-failedAttempt).TotalSeconds<30)
@@ -108,26 +101,13 @@ namespace Dmail.Presentation.Menus
                     Console.ReadLine();
                     continue;
                 }
-                if (response == ResponseType.NotFound)
+                var auth = new AccounActions();
+                var check = auth.AuthAccount(authRepo, email, password);
+                if (check != DateTime.Now)
                 {
-                    Console.WriteLine("Nije pronađen račun povezan na taj email");
-                    failedAttempt = DateTime.Now;
-                    Console.ReadLine();
-                    continue;
+                    failedAttempt = check;
+                    return;
                 }
-                else if (response == ResponseType.ValidationFailed)
-                {
-                    Console.WriteLine("Nije upisana točna šifra");
-                    failedAttempt = DateTime.Now;
-                    Console.ReadLine();
-
-                    continue;
-                }
-                //Add known account when I add account actions
-                Console.WriteLine("Uspješno logirani u račun");
-                Console.ReadLine();
-                Info.UserId= authRepo.GetIdByEmail(email);
-                Info.UserEmail = authRepo.GetUser(Info.UserId).Email;
                 MainMenu.Content();
                 break;
 
