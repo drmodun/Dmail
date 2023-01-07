@@ -80,5 +80,10 @@ namespace Dmail.Presentation.Actions
            IncomingMessageMenu.MessagesMenu(messages);
 
         }
+        public ICollection<MessagePrint> GetSentMessages(MessageRepo messageRepo)
+        {
+            var messages = messageRepo.GetSentMessages(Info.UserId);
+            return messages;
+        }
     }
 }

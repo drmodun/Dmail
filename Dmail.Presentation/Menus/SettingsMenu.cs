@@ -1,4 +1,6 @@
 ﻿using Dmail.Domain.Models;
+using Dmail.Domain.Repositories;
+using Dmail.Presentation.Actions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,16 +13,14 @@ namespace Dmail.Presentation.Menus
 {
     public static class SettingsMenu
     {
-        public static void Content()
+        
+        public static void PrintUsers(MessageRepo messageRepo)
         {
             Console.Clear();
-            PrintUsers();
-        }
-        public static void PrintUsers()
-        {
+            var actions = new GetUsers();
             Console.Clear();
             Console.WriteLine("Korisnici koji šalju");
-            var allSenders = Info.Repos.MessageRepo.GetSenderUsers(Info.UserId);
+            var allSenders = actions.GetSenderUsers(Info.UserId, messageRepo);
             if (allSenders.Count() == 0)
             {
                 Console.WriteLine("Dosada ovome mailu nije upućena ni jedna poruka");
@@ -29,7 +29,7 @@ namespace Dmail.Presentation.Menus
             }
             Prints.PrintUsers(allSenders);
             Console.WriteLine("Korisnici kojima ste slali:");
-            var allReceivers = Info.Repos.MessageRepo.GetReceiverUsers(Info.UserId);
+            var allReceivers =actions.GetReceiverUsers(Info.UserId, messageRepo);
             if (allReceivers.Count() == 0)
             {
                 Console.WriteLine("Izgleda da nema maila poslanog na bilo kojeg korisnika trenutno");

@@ -103,7 +103,7 @@ namespace Dmail.Presentation.Menus
                 }
                 var auth = new AccounActions();
                 var check = auth.AuthAccount(authRepo, email, password);
-                if (check != DateTime.Now)
+                if (check != DateTime.MinValue)
                 {
                     failedAttempt = check;
                     return;

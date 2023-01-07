@@ -36,7 +36,7 @@ namespace Dmail.Presentation.Menus
                         IncomingMessageMenu.Content();
                         break;
                     case 2:
-                        OutgoingMessageMenu.GetSentMessages(Info.Repos.UserRepo, Info.Repos.MessageRepo);
+                        OutgoingMessageMenu.GetSentMessages(Info.Repos.MessageRepo);
                         break;
                     case 3:
                         SpamMessageMenu.Content();
@@ -48,7 +48,7 @@ namespace Dmail.Presentation.Menus
                         NewMessageMenu.NewEvent(Info.Repos.UserRepo, Info.Repos.MessageRepo, Info.Repos.MessageReceiversRepo);
                         break;
                     case 6:
-                        SettingsMenu.Content();
+                        SettingsMenu.PrintUsers(Info.Repos.MessageRepo);
                         break;
                     case 7:
                         return;

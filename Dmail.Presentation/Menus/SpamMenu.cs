@@ -2,6 +2,9 @@
 using Dmail.Domain.Enums;
 using Dmail.Domain.Models;
 using Dmail.Domain.Repositories;
+using Dmail.Presentation.Actions;
+using System.ComponentModel.DataAnnotations;
+
 namespace Dmail.Presentation.Menus
 {
     public static class SpamMenu
@@ -29,10 +32,10 @@ namespace Dmail.Presentation.Menus
                     case 0:
                         return;
                     case 2:
-                        RemoveSpamConnection(Info.Repos.UserRepo, Info.Repos.SpamRepo, user); 
+                        RemoveSpamConnection(Info.Repos.SpamRepo, user); 
                         break;
                     case 1:
-                        AddSpamConnection(Info.Repos.UserRepo, Info.Repos.SpamRepo, user);
+                        AddSpamConnection(Info.Repos.SpamRepo, user);
                         break;
                     default:
                         Console.WriteLine("Nije upisan točan input");
@@ -43,8 +46,9 @@ namespace Dmail.Presentation.Menus
                 continue;
             }
         }
-        public static void AddSpamConnection(UserRepo userRepo, SpamRepo spamRepo, UserPrint blocked) 
+        public static void AddSpamConnection(SpamRepo spamRepo, UserPrint blocked) 
         {
+            var actions = new SpamActions();
                 if (blocked.Blocked)
                 {
                     Console.WriteLine("Nije moguće blokirati već blokirani račun");
@@ -54,7 +58,7 @@ namespace Dmail.Presentation.Menus
                 var confirmation = MainMenu.ConfirmationDialog();
                 if (!confirmation)
                     return;
-                var check = spamRepo.TryAdd(Info.UserId, blocked.Id);
+                var check = actions.MakeSpamConnection(Info.UserId, blocked.Id, spamRepo);
                 if (check == ResponseType.ValidationFailed)
                 {
                     Console.WriteLine("Nije upisan pravilan email");
@@ -72,9 +76,10 @@ namespace Dmail.Presentation.Menus
                 return;
 
             }
-        public static void RemoveSpamConnection(UserRepo userRepo, SpamRepo spamRepo, UserPrint unblocked)
+        public static void RemoveSpamConnection(SpamRepo spamRepo, UserPrint unblocked)
         {
-                if (!unblocked.Blocked)
+            var actions = new SpamActions();
+            if (!unblocked.Blocked)
                 {
                     Console.WriteLine("Nije moguće odblokirati neblokiran račun");
                     Console.ReadLine();
@@ -83,7 +88,7 @@ namespace Dmail.Presentation.Menus
                 var confirmation = MainMenu.ConfirmationDialog();
                 if (!confirmation)
                     return;
-                var check = spamRepo.Delete(Info.UserId, unblocked.Id);
+                var check = actions.RemoveSpamConnection(Info.UserId, unblocked.Id, spamRepo);
                 if (check == ResponseType.NotFound)
                 {
                     Console.WriteLine("Spam lista ne sadrži tog korisnika");

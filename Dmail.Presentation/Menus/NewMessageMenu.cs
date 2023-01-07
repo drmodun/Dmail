@@ -8,6 +8,7 @@ using Dmail.Domain.Repositories;
 using Dmail.Domain.Enums;
 using Dmail.Domain.Factories;
 using System.Reflection;
+using Dmail.Presentation.Actions;
 
 namespace Dmail.Presentation.Menus
 {
@@ -48,6 +49,7 @@ namespace Dmail.Presentation.Menus
         }
         public static void NewMessage(UserRepo userRepo, MessageRepo messageRepo, MessageReceiversRepo messageReceiversRepo)
         {
+            var actions = new AccounActions();
             while (true)
             {
                 Console.WriteLine("Početak nove poruke");
@@ -61,7 +63,7 @@ namespace Dmail.Presentation.Menus
                     return;
                 foreach (var email in emails)
                 {
-                    var id = userRepo.GetIdByEmail(email);
+                    var id = actions.GetUserIdByEmail(email, userRepo);
                     if (id == -1)
                     {
                         Console.WriteLine("Neki od mailova ne postoje");
@@ -83,6 +85,8 @@ namespace Dmail.Presentation.Menus
         }
         public static bool NewMessageContent(List<int> emailIds, UserRepo userRepo, MessageRepo messageRepo, MessageReceiversRepo messageReceiversRepo)
         {
+            var actionsMessages = new MessageActions();
+            var actions = new AccounActions();
             Console.WriteLine("Upišite naslov maila:");
             var title = Console.ReadLine();
             if (title == "0")
@@ -103,23 +107,22 @@ namespace Dmail.Presentation.Menus
             {
                 return false;
             }
-            check1 = messageRepo.NewMessage(Info.UserId, false, DateTime.MinValue, title, body);
+            check1 = actionsMessages.GenerateMessage(messageRepo, title, body);
             if (check1 == -1)
             {
                 Console.WriteLine("Došlo je do problema pri pravljenju poruke");
-                Console.WriteLine(check1.ToString());
                 Console.ReadLine();
                 return false;
             }
             foreach (var item in emailIds)
             {
                 
-                var check2 = messageReceiversRepo.NewConnection(check1, item);
+                var check2 = actionsMessages.MakeConnection(messageReceiversRepo, check1, item);
                 if (check1 == -1 || check2 != ResponseType.Success) 
                 {
                     Console.WriteLine(check2.ToString());
                     Console.WriteLine(check1.ToString());
-                    Console.WriteLine($"Došlo je do greške pri pravljenju maila osobi {userRepo.GetUser(item).Email}");
+                    Console.WriteLine($"Došlo je do greške pri pravljenju maila osobi {actions.GetUserEmail(item)}");
                     Console.ReadLine();
                     continue;
                 }
@@ -139,6 +142,8 @@ namespace Dmail.Presentation.Menus
     
     public static void NewEvent(UserRepo userRepo, MessageRepo messageRepo, MessageReceiversRepo messageReceiversRepo)
     {
+            var actions = new AccounActions();
+            var actionMessages = new MessageActions();
         while (true)
         {
             Console.WriteLine("Početak novog događaja");
@@ -152,7 +157,7 @@ namespace Dmail.Presentation.Menus
                 return;
             foreach (var email in emails)
             {
-                var id = userRepo.GetIdByEmail(email);
+                var id = actions.GetUserIdByEmail(email, userRepo);
                 if (id == -1)
                 {
                     Console.WriteLine("Neki od mailova ne postoje");
@@ -197,23 +202,22 @@ namespace Dmail.Presentation.Menus
             {
                 return;
             }
-            check1 = messageRepo.NewMessage(Info.UserId, true, dateConverted, title, "");
+            check1 = actionMessages.GenerateEvent(messageRepo, title, dateConverted);
             if (check1 == -1)
             {
                 Console.WriteLine("Došlo je do problema pri pravljenju poruke");
-                Console.WriteLine(check1.ToString());
                 Console.ReadLine();
                 break;
             }
             foreach (var item in emailIds)
             {
 
-                var check2 = messageReceiversRepo.NewConnection(check1, item);
+                var check2 = actionMessages.MakeConnection(messageReceiversRepo,check1, item);
                 if (check1 == -1 || check2 != ResponseType.Success)
                 {
                     Console.WriteLine(check2.ToString());
                     Console.WriteLine(check1.ToString());
-                    Console.WriteLine($"Došlo je do greške pri pravljenju maila osobi {userRepo.GetUser(item).Email}");
+                    Console.WriteLine($"Došlo je do greške pri pravljenju maila osobi {actions.GetUserEmail(item)}");
                     Console.ReadLine();
                     continue;
                 }

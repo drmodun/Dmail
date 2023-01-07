@@ -6,6 +6,7 @@ using System.Linq;
 using System.Security.Policy;
 using System.Text;
 using System.Threading.Tasks;
+using Dmail.Presentation.Actions;
 
 namespace Dmail.Presentation.Menus
 {
@@ -13,10 +14,11 @@ namespace Dmail.Presentation.Menus
     {
         public static List<string> TranslatedEmails(ICollection<int> AllEmails)
         {
+            var actions = new AccounActions();
             var list = new List<String>();
             foreach (var email in AllEmails)
             {
-                list.Add(Info.Repos.UserRepo.GetUser(email).Email);
+                list.Add(actions.GetUserEmail(email));
             }
             return list;
 

@@ -42,5 +42,20 @@ namespace Dmail.Presentation.Actions
             var returnValue = messageReceiversRepo.UpdateAnswerToEvent(eventId, receiverId, answer);
             return returnValue;
         }
+        public int GenerateMessage(MessageRepo messageRepo, string title,  string answer)
+        {
+            var returnValue = messageRepo.NewMessage(Info.UserId, false, DateTime.MinValue.ToUniversalTime(), title, answer);
+            return returnValue;
+        }
+        public int GenerateEvent(MessageRepo messageRepo, string title, DateTime dateOfEvent)
+        {
+            var returnValue = messageRepo.NewMessage(Info.UserId, true, dateOfEvent, title, "");
+            return returnValue;
+        }
+        public ResponseType MakeConnection(MessageReceiversRepo messageReceiversRepo, int messageId, int receiverId)
+        {
+            var returnValue = messageReceiversRepo.NewConnection(messageId, receiverId);
+            return returnValue;
+        }
     }
 }

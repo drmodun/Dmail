@@ -54,7 +54,7 @@ namespace Dmail.Presentation.Actions
             Console.ReadLine();
             Info.UserId = authRepo.GetIdByEmail(email);
             Info.UserEmail = authRepo.GetUser(Info.UserId).Email;
-            return failedAttempt;
+            return DateTime.MinValue;
         }
         public ResponseType CreateNewSpamConnection(int senderId)
         {
@@ -66,5 +66,10 @@ namespace Dmail.Presentation.Actions
             var user = Info.Repos.UserRepo.GetUser(userId).Email;
             return user;
         }
+        public int GetUserIdByEmail(string email, UserRepo userRepo)
+        {
+            var id = userRepo.GetIdByEmail(email);
+            return id;
+        } 
     }
 }

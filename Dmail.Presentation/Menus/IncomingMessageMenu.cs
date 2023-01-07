@@ -218,7 +218,7 @@ namespace Dmail.Presentation.Menus
                                 return false;
                             if (confirm == "1")
                                 answer = "Prihvaćen";
-                            var newMessage = actions.GenerateAnswer(messageRepo, message, answer);
+                            var newMessage = actions.GenerateMessage(messageRepo, "Odgovor na "+message.Title, answer);
                             var check3 = actions.AnswerEvent(messageReceiversRepo, Info.UserId, message.Id,  confirm == "1");
                             if (check3 != ResponseType.Success)
                             {
@@ -226,7 +226,7 @@ namespace Dmail.Presentation.Menus
                                 Console.ReadLine();
                                 break;
                             }
-                            var check4 = messageReceiversRepo.NewConnection(newMessage, message.SenderId);
+                            var check4 = actions.MakeConnection(messageReceiversRepo, newMessage, message.SenderId);
                             if (check4 != ResponseType.Success)
                             {
                                 Console.WriteLine("Došlo je do pogrešku pri odgovaranju na poruku");
