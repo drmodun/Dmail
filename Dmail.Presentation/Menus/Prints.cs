@@ -1,11 +1,4 @@
 ﻿using Dmail.Domain.Models;
-using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
-using System.Security.Policy;
-using System.Text;
-using System.Threading.Tasks;
 using Dmail.Presentation.Actions;
 
 namespace Dmail.Presentation.Menus
@@ -33,7 +26,7 @@ namespace Dmail.Presentation.Menus
             if (sender)
             {
                 var emails = TranslatedEmails(messageToPrint.AllEmails);
-                Console.WriteLine("Primatelji: "+string.Join(", ", emails));
+                Console.WriteLine("Primatelji: " + string.Join(", ", emails));
             }
         }
         public static void PrintDetailedEvent(MessagePrint messageToPrint, bool accepted)

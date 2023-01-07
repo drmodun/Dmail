@@ -1,11 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Dmail.Domain.Models
+﻿namespace Dmail.Domain.Models
 {
     public class MessagePrint
     {
@@ -13,7 +6,7 @@ namespace Dmail.Domain.Models
         public string Title { get; set; }
         public string Body { get; set; }
         public int SenderId { get; set; }
-        public string SenderEmail { get; set;}
+        public string SenderEmail { get; set; }
 
         public int RecipientId;
         public DateTime CreatedAt { get; set; }

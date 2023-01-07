@@ -1,10 +1,4 @@
-﻿using Dmail.Domain.Enums;
-using Dmail.Domain.Repositories;
-using Dmail.Domain.Factories;
-using Microsoft.EntityFrameworkCore.Query.SqlExpressions;
-using System.Diagnostics.Contracts;
-
-namespace Dmail.Presentation.Menus
+﻿namespace Dmail.Presentation.Menus
 {
     public static class MainMenu
     {

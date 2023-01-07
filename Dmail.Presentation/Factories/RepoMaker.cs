@@ -1,11 +1,5 @@
-﻿using Dmail.Domain.Repositories;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
-using Dmail.Domain.Factories;
+﻿using Dmail.Domain.Factories;
+using Dmail.Domain.Repositories;
 
 namespace Dmail.Presentation.Factories
 {
@@ -21,7 +15,7 @@ namespace Dmail.Presentation.Factories
                 SpamRepo = RepositoryFactory.Create<SpamRepo>(),
             };
             return repos;
- 
+
         }
     }
 }

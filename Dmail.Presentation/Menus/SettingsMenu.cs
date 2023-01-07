@@ -1,20 +1,12 @@
 ﻿using Dmail.Domain.Models;
 using Dmail.Domain.Repositories;
 using Dmail.Presentation.Actions;
-using System;
-using System.Collections.Generic;
-using System.Drawing.Printing;
-using System.Linq;
-using System.Net.WebSockets;
-using System.Reflection.Metadata.Ecma335;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Dmail.Presentation.Menus
 {
     public static class SettingsMenu
     {
-        
+
         public static void GetUsers(MessageRepo messageRepo)
         {
             Console.Clear();
@@ -27,7 +19,7 @@ namespace Dmail.Presentation.Menus
                 Console.ReadLine();
                 return;
             }
-            var allReceivers =actions.GetReceiverUsers(Info.UserId, messageRepo);
+            var allReceivers = actions.GetReceiverUsers(Info.UserId, messageRepo);
             if (allReceivers.Count() == 0)
             {
                 Console.WriteLine("Izgleda da nema maila poslanog na bilo kojeg korisnika trenutno");
@@ -53,7 +45,7 @@ namespace Dmail.Presentation.Menus
                 Console.WriteLine("0 - Main menu");
                 var choice = Console.ReadLine();
                 ICollection<UserPrint> sendersCopy;
-                ICollection<UserPrint> receiversCopy; 
+                ICollection<UserPrint> receiversCopy;
                 switch (choice)
                 {
                     case "1":
@@ -68,8 +60,8 @@ namespace Dmail.Presentation.Menus
                         break;
                     case "2":
                         Console.Clear();
-                        sendersCopy = allSenders.Where(x => x.Blocked==false).ToList();
-                        receiversCopy = allReceivers.Where(x => x.Blocked==false).ToList();
+                        sendersCopy = allSenders.Where(x => x.Blocked == false).ToList();
+                        receiversCopy = allReceivers.Where(x => x.Blocked == false).ToList();
                         Console.WriteLine("Ispis samo neblokiranih korisnika (pošiljatelji)");
                         Prints.PrintUsers(sendersCopy);
                         Console.WriteLine("Ispis samo neblokiranih primatelja");

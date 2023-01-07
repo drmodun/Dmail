@@ -1,15 +1,5 @@
-﻿using Dmail.Data.Entities.Models;
-using Dmail.Domain.Enums;
-using Dmail.Domain.Models;
+﻿using Dmail.Domain.Enums;
 using Dmail.Domain.Repositories;
-using Microsoft.EntityFrameworkCore.Query.Internal;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics.Contracts;
-using System.Linq;
-using System.Security.Policy;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Dmail.Presentation.Actions
 {
@@ -70,6 +60,6 @@ namespace Dmail.Presentation.Actions
         {
             var id = userRepo.GetIdByEmail(email);
             return id;
-        } 
+        }
     }
 }

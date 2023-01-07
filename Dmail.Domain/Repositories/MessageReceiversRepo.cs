@@ -1,12 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Dmail.Data.Entities;
+﻿using Dmail.Data.Entities;
 using Dmail.Data.Entities.Models;
-using Dmail.Domain.Enums;
 using Dmail.Data.Enums;
+using Dmail.Domain.Enums;
 
 namespace Dmail.Domain.Repositories
 {
@@ -43,8 +38,8 @@ namespace Dmail.Domain.Repositories
             var message = DbContext.Messages.Find(messageId);
             if (message == null || receiver == null)
                 return ResponseType.NotFound;
-            var connectionToUpdate = DbContext.MessagesReceivers.Find(receiverId,messageId);
-            if (connectionToUpdate.Read==read)
+            var connectionToUpdate = DbContext.MessagesReceivers.Find(receiverId, messageId);
+            if (connectionToUpdate.Read == read)
                 return ResponseType.NotChanged;
             connectionToUpdate.Read = read;
             return SaveChanges();
@@ -63,7 +58,7 @@ namespace Dmail.Domain.Repositories
             if (message == null || receiver == null)
                 return ResponseType.NotFound;
             var connectionToUpdate = DbContext.MessagesReceivers.Find(receiverId, messageId);
-            if (connectionToUpdate.Answer==acceptedEnum)
+            if (connectionToUpdate.Answer == acceptedEnum)
                 return ResponseType.NotChanged;
             connectionToUpdate.Answer = acceptedEnum;
             return SaveChanges();
@@ -81,7 +76,7 @@ namespace Dmail.Domain.Repositories
         }
         public bool GetStatus(int receiverId, int messageId)
         {
-            return DbContext.MessagesReceivers.Find(receiverId, messageId).Answer==EventAnswer.Accepted;
+            return DbContext.MessagesReceivers.Find(receiverId, messageId).Answer == EventAnswer.Accepted;
         }
     }
 }

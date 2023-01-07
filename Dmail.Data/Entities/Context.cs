@@ -1,19 +1,14 @@
 ﻿using Dmail.Data.Entities.Models;
+using Dmail.Data.Enums;
 using Dmail.Data.Seeds;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.Extensions.Configuration;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Dmail.Data.Enums;
 using Npgsql;
 
 namespace Dmail.Data.Entities
 {
-    public class DmailContext : DbContext 
+    public class DmailContext : DbContext
     {
         public DmailContext(DbContextOptions options) : base(options)
         {
@@ -30,7 +25,7 @@ namespace Dmail.Data.Entities
             modelBuilder.Entity<User>()
                 .HasKey(x => x.Id);
             modelBuilder.Entity<User>()
-                .Property(x=>x._password)
+                .Property(x => x._password)
                 .IsRequired();
             modelBuilder.Entity<Message>()
                 .HasOne(s => s.Sender)
@@ -63,7 +58,7 @@ namespace Dmail.Data.Entities
 
 
             Seeder.Seed(modelBuilder);
-            
+
             base.OnModelCreating(modelBuilder);
         }
     }

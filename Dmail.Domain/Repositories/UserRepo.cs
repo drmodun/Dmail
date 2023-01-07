@@ -1,13 +1,7 @@
 ﻿using Dmail.Data.Entities;
 using Dmail.Data.Entities.Models;
 using Dmail.Domain.Enums;
-using Dmail.Domain.Models;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Dmail.Domain.Repositories
 {
@@ -86,16 +80,19 @@ namespace Dmail.Domain.Repositories
         {
             if (DbContext.Users.FirstOrDefault(x => x.Email == email) != null)
                 return ResponseType.Exists;
-            var user = new User(email, password) {
+            var user = new User(email, password)
+            {
             };
             Add(user);
             return ResponseType.Success;
         }
 
-        public int GetIdByEmail(string email){
+        public int GetIdByEmail(string email)
+        {
             var checkEmail = DbContext.Users.AsNoTracking().FirstOrDefault(x => x.Email == email);
             if (checkEmail == null)
                 return -1;
-            return checkEmail.Id;}
+            return checkEmail.Id;
+        }
     }
 }

@@ -1,14 +1,7 @@
-﻿using Dmail.Data.Entities.Models;
-using Dmail.Domain.Enums;
+﻿using Dmail.Domain.Enums;
 using Dmail.Domain.Models;
 using Dmail.Domain.Repositories;
 using Dmail.Presentation.Actions;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Dmail.Presentation.Menus
 {

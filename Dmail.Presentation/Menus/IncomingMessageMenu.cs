@@ -1,20 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Dmail.Domain.Repositories;
-using Dmail.Presentation;
-using Dmail.Domain.Factories;
-using System.Security.Cryptography.X509Certificates;
-using System.Reflection.Metadata.Ecma335;
+﻿using Dmail.Domain.Enums;
 using Dmail.Domain.Models;
-using Dmail.Domain.Enums;
-using System.Runtime.InteropServices;
-using Microsoft.EntityFrameworkCore.Diagnostics;
-using Dmail.Data.Entities.Models;
+using Dmail.Domain.Repositories;
 using Dmail.Presentation.Actions;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace Dmail.Presentation.Menus
 {

@@ -1,13 +1,7 @@
-﻿using Dmail.Data.Entities.Models;
+﻿using Dmail.Domain.Enums;
+using Dmail.Domain.Models;
 using Dmail.Domain.Repositories;
 using Dmail.Presentation.Menus;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Dmail.Domain.Models;
-using Dmail.Domain.Enums;
 
 namespace Dmail.Presentation.Actions
 {
@@ -42,7 +36,7 @@ namespace Dmail.Presentation.Actions
             var returnValue = messageReceiversRepo.UpdateAnswerToEvent(eventId, receiverId, answer);
             return returnValue;
         }
-        public int GenerateMessage(MessageRepo messageRepo, string title,  string answer)
+        public int GenerateMessage(MessageRepo messageRepo, string title, string answer)
         {
             var returnValue = messageRepo.NewMessage(Info.UserId, false, DateTime.MinValue.ToUniversalTime(), title, answer);
             return returnValue;

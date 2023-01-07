@@ -1,11 +1,4 @@
-﻿using Dmail.Domain.Repositories;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Dmail.Domain.Factories;
-using Dmail.Presentation.Actions;
+﻿using Dmail.Presentation.Actions;
 
 namespace Dmail.Presentation.Menus
 {
@@ -29,7 +22,7 @@ namespace Dmail.Presentation.Menus
                     Console.WriteLine("0 - Povratak na glavni menu");
                     var choice = Console.ReadLine();
                     int.TryParse(choice, out _choice);
-                    if (_choice == 0 && choice!="0")
+                    if (_choice == 0 && choice != "0")
                     {
                         Console.WriteLine("Nije upisan valjani input");
                         Console.ReadLine();
@@ -41,7 +34,7 @@ namespace Dmail.Presentation.Menus
                             actions.GetSeenMessages(Info.Repos.UserRepo, Info.Repos.MessageRepo, true);
                             break;
                         case 2:
-                           actions.GetNonSeenMessages(Info.Repos.UserRepo, Info.Repos.MessageRepo, Info.Repos.MessageReceiversRepo, true);
+                            actions.GetNonSeenMessages(Info.Repos.UserRepo, Info.Repos.MessageRepo, Info.Repos.MessageReceiversRepo, true);
                             break;
                         case 3:
                             actions.GetMessagesbySender(Info.Repos.UserRepo, Info.Repos.MessageRepo, true);

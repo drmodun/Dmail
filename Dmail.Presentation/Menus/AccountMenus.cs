@@ -1,13 +1,6 @@
-﻿using Dmail.Domain.Enums;
-using Dmail.Domain.Repositories;
+﻿using Dmail.Domain.Repositories;
 using Dmail.Presentation.Actions;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics.Contracts;
-using System.Linq;
-using System.Security.Policy;
-using System.Text;
-using System.Threading.Tasks;
+
 
 namespace Dmail.Presentation.Menus
 {
@@ -51,7 +44,7 @@ namespace Dmail.Presentation.Menus
                 }
                 Console.WriteLine("Ponovljena šifra");
                 var passCheck = Console.ReadLine();
-                
+
                 if (password != passCheck)
                 {
                     Console.WriteLine("Šifre se ne podudaraju");
@@ -93,10 +86,10 @@ namespace Dmail.Presentation.Menus
                 var password = Console.ReadLine();
                 if (email == "0" || password == "0")
                     return DateTime.Now;
-                if ((DateTime.Now-failedAttempt).TotalSeconds<30)
+                if ((DateTime.Now - failedAttempt).TotalSeconds < 30)
                 {
                     Console.WriteLine("Pričekajte 30 sekundi od prošlog neuspjelog pokušaja logina");
-                    Console.WriteLine("Preostalo vrijeme: " +(30-(DateTime.Now - failedAttempt).TotalSeconds).ToString()+ " sekundi");
+                    Console.WriteLine("Preostalo vrijeme: " + (30 - (DateTime.Now - failedAttempt).TotalSeconds).ToString() + " sekundi");
                     Console.ReadLine();
                     continue;
                 }

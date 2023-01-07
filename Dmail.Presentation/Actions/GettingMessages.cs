@@ -1,11 +1,6 @@
 ﻿using Dmail.Domain.Models;
 using Dmail.Domain.Repositories;
 using Dmail.Presentation.Menus;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Dmail.Presentation.Actions
 {
@@ -30,7 +25,7 @@ namespace Dmail.Presentation.Actions
                 Console.ReadLine();
                 return;
             }
-           IncomingMessageMenu.MessagesMenu(messages, 1);
+            IncomingMessageMenu.MessagesMenu(messages, 1);
 
         }
         public void GetNonSeenMessages(UserRepo userRepo, MessageRepo messageRepo, MessageReceiversRepo messageReceiversRepo, bool spam)
@@ -53,7 +48,7 @@ namespace Dmail.Presentation.Actions
                 Console.ReadLine();
                 return;
             }
-           IncomingMessageMenu.MessagesMenu(messages, 0);
+            IncomingMessageMenu.MessagesMenu(messages, 0);
 
         }
         public void GetMessagesbySender(UserRepo userRepo, MessageRepo messageRepo, bool spam)
@@ -77,7 +72,7 @@ namespace Dmail.Presentation.Actions
                 return;
             }
             Console.Clear();
-           IncomingMessageMenu.MessagesMenu(messages, 2);
+            IncomingMessageMenu.MessagesMenu(messages, 2);
 
         }
         public ICollection<MessagePrint> GetSentMessages(MessageRepo messageRepo)
