@@ -74,11 +74,18 @@ namespace Dmail.Presentation.Menus
             }
         }
         
-        public static void MessagesMenu(ICollection<MessagePrint> messages)
+        public static void MessagesMenu(ICollection<MessagePrint> messages, int seen)
         {
             while (true)
             {
                 Console.Clear();
+                messages=messages.OrderByDescending(x => x.CreatedAt).ToList();
+                if (messages.Count == 0)
+                {
+                    Console.WriteLine("Nije pronađena ni jedna poruka");
+                    Console.ReadLine();
+                    return;
+                }
                 PrintMessages(messages);
                 Console.WriteLine("Upišite što želite s porukama");
                 Console.WriteLine("1 - Detaljni ispis");
@@ -86,30 +93,39 @@ namespace Dmail.Presentation.Menus
                 Console.WriteLine("3 - Ispiši samo događaje");
                 Console.WriteLine("0 ili bilo koji drugi input - Nazad");
                 var choice = Console.ReadLine();
+                var messagesCopy = messages.Where(x => x.IsEvent == false).ToList();
+                var eventsCopy = messages.Where(x => x.IsEvent == true).ToList();
+
                 switch (choice)
                 {
                     case "1":
                         Console.Clear();
-                        ChooseMessage(Info.Repos.UserRepo, Info.Repos.MessageRepo, Info.Repos.MessageReceiversRepo, messages);
+                        messages = ChooseMessage(Info.Repos.UserRepo, Info.Repos.MessageRepo, Info.Repos.MessageReceiversRepo, messages, seen);
                         break;
                     case "2":
-                        var messagesCopy = messages.Where(x => x.IsEvent == false).ToList();
                         Console.Clear();
                         Console.WriteLine("Ispis svih mailova");
-                        ChooseMessage(Info.Repos.UserRepo, Info.Repos.MessageRepo, Info.Repos.MessageReceiversRepo, messagesCopy);
+                        messages = ChooseMessage(Info.Repos.UserRepo, Info.Repos.MessageRepo, Info.Repos.MessageReceiversRepo, messagesCopy, seen);
+                        foreach(var eventEnumerate in eventsCopy)
+                        {
+                            messages.Add(eventEnumerate);
+                        }
                         break;
                     case "3":
-                        var eventsCopy = messages.Where(x => x.IsEvent == true).ToList();
                         Console.Clear();
                         Console.WriteLine("Ispis svih događaja");
-                        ChooseMessage(Info.Repos.UserRepo, Info.Repos.MessageRepo, Info.Repos.MessageReceiversRepo, eventsCopy);
+                        messages = ChooseMessage(Info.Repos.UserRepo, Info.Repos.MessageRepo, Info.Repos.MessageReceiversRepo, eventsCopy, seen);
+                        foreach (var messageEnumerate in messagesCopy)
+                        {
+                            messages.Add(messageEnumerate);
+                        }
                         break;
                     default:
                         return;
                 }
             }
         }
-        public static void ChooseMessage(UserRepo userRepo, MessageRepo messageRepo, MessageReceiversRepo messageReceiversRepo, ICollection<MessagePrint> messages)
+        public static ICollection<MessagePrint> ChooseMessage(UserRepo userRepo, MessageRepo messageRepo, MessageReceiversRepo messageReceiversRepo, ICollection<MessagePrint> messages, int seen)
         {
             var actions = new MessageActions();
             while (true)
@@ -121,7 +137,7 @@ namespace Dmail.Presentation.Menus
                 var selectId = -1;
                 int.TryParse(select, out selectId);
                 if (selectId == 0 && select=="0")
-                    return;
+                    return messages;
                 if (selectId == 0 && select != "0")
                 {
                     Console.WriteLine("Upisan krivi unos");
@@ -135,15 +151,17 @@ namespace Dmail.Presentation.Menus
                     continue;
                 }
                 var message = messages.ElementAt(selectId - 1);
-                actions.GetMessageAndUpdateSeenStatus(message, messageReceiversRepo);
-                messages = DetailedMessageMenu(message, messageRepo, messageReceiversRepo, userRepo, messages);
+                messages = DetailedMessageMenu(message, messageRepo, messageReceiversRepo, userRepo, messages,seen);
 
             }
         }
-        public static ICollection<MessagePrint> DetailedMessageMenu(MessagePrint message, MessageRepo messageRepo, MessageReceiversRepo messageReceiversRepo, UserRepo userRepo, ICollection<MessagePrint> messages)
+        public static ICollection<MessagePrint> DetailedMessageMenu(MessagePrint message, MessageRepo messageRepo, MessageReceiversRepo messageReceiversRepo, UserRepo userRepo, ICollection<MessagePrint> messages, int seen)
         {
-            var selectId= -1;
+            var selectId = -1;
             var actions = new MessageActions();
+            actions.GetMessageAndUpdateSeenStatus(message, messageReceiversRepo);
+            if (seen==0)
+                messages.Remove(message);   
             var userActions = new AccounActions();
             while (true)
             {
@@ -174,6 +192,10 @@ namespace Dmail.Presentation.Menus
                             break;
                         }
                         Console.WriteLine("Uspješno poruka označena kao nepročitana");
+                        if (seen==0)
+                            messages.Add(message);
+                        else if (seen==1)
+                            messages.Remove(message);
                         Console.ReadLine();
                         return messages;
                     case "2":

@@ -112,24 +112,33 @@ namespace Dmail.Presentation.Menus
                 Console.WriteLine("3 - Ispiši samo događaje");
                 Console.WriteLine("0 ili bilo koji drugi input - Nazad");
                 var choice = Console.ReadLine();
+                var eventsCopy = messages.Where(x => x.IsEvent == true).ToList();
+                var messagesCopy = messages.Where(x => x.IsEvent == false).ToList();
+
                 switch (choice)
                 {
                     case "1":
                         messages = ChooseMessage(Info.Repos.MessageRepo, Info.Repos.MessageReceiversRepo, messages);
                         break;
                     case "2":
-                        var messagesCopy = messages.Where(x => x.IsEvent == false).ToList();
                         Console.Clear();
                         Console.WriteLine("Ispis svih mailova");
                         PrintMessages(messagesCopy);
                         messages = ChooseMessage(Info.Repos.MessageRepo, Info.Repos.MessageReceiversRepo, messagesCopy);
+                        foreach (var eventEnumerate in eventsCopy)
+                        {
+                            messages.Add(eventEnumerate);
+                        }
                         break;
                     case "3":
-                        var eventsCopy = messages.Where(x => x.IsEvent == true).ToList();
                         Console.Clear();
                         Console.WriteLine("Ispis svih događaja");
                         PrintMessages(eventsCopy);
                         messages = ChooseMessage(Info.Repos.MessageRepo, Info.Repos.MessageReceiversRepo, eventsCopy);
+                        foreach (var messageEnumerate in messagesCopy)
+                        {
+                            messages.Add(messageEnumerate);
+                        }
                         break;
                     default:
                         return;

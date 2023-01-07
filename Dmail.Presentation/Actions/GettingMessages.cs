@@ -30,7 +30,7 @@ namespace Dmail.Presentation.Actions
                 Console.ReadLine();
                 return;
             }
-           IncomingMessageMenu.MessagesMenu(messages);
+           IncomingMessageMenu.MessagesMenu(messages, 1);
 
         }
         public void GetNonSeenMessages(UserRepo userRepo, MessageRepo messageRepo, MessageReceiversRepo messageReceiversRepo, bool spam)
@@ -53,7 +53,7 @@ namespace Dmail.Presentation.Actions
                 Console.ReadLine();
                 return;
             }
-           IncomingMessageMenu.MessagesMenu(messages);
+           IncomingMessageMenu.MessagesMenu(messages, 2);
 
         }
         public void GetMessagesbySender(UserRepo userRepo, MessageRepo messageRepo, bool spam)
@@ -77,7 +77,7 @@ namespace Dmail.Presentation.Actions
                 return;
             }
             Console.Clear();
-           IncomingMessageMenu.MessagesMenu(messages);
+           IncomingMessageMenu.MessagesMenu(messages, 2);
 
         }
         public ICollection<MessagePrint> GetSentMessages(MessageRepo messageRepo)
